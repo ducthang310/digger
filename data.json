@@ -1,0 +1,52 @@
+{
+  "zoom_levels": [
+    {
+      "uuid": "cd3cbce0-6b91-4804-9553-17d456e2cc05",
+      "name": "Level 1",
+      "level": 1,
+      "status": 1,
+      "image": {
+        "uuid": "bm88bce0-6b91-4804-9553-17d456e2cc05",
+        "name": "level0.png",
+        "path": "/tools/cd3cbce0-6b91-4804-9553-17d456e2cc05",
+        "url": "https://staging.cdn.survivaltools.com.au/tools/bm88bce0-6b91-4804-9553-17d456e2cc05/level0.png",
+        "width": 1024,
+        "height": 512,
+        "size_in_kbs": 481
+      }
+    },
+    {
+      "uuid": "581cb413-8b28-4a95-8714-d3139965ccd6",
+      "name": "Level 2",
+      "level": 2,
+      "status": 1,
+      "image": {
+        "name": "level1.png",
+        "path": "/tools/581cb413-8b28-4a95-8714-d3139965ccd6",
+        "url": "https://staging.cdn.survivaltools.com.au/tools/d33e581cb413-8b28-4a95-8714-d3139965ccd6/level1.png",
+        "width": 2048,
+        "height": 1024,
+        "size_in_kbs": 962
+      }
+    }
+  ],
+  "points": [
+    {
+      "uuid": "640d7140-8553-4064-98b8-4a4aa3c4e186",
+      "type": "normal",
+      "text": "Barrier",
+      "text_rotation": 1,
+      "title": "Barrier Opening",
+      "description": "Defines the min opening sizes of barrier openings so baby heads don't fit through bars potentially causing fatal injury",
+      "meta_data": {},
+      "coordinate": {
+        "x": 100,
+        "y": 200
+      },
+      "visible_in_zoom_levels": [
+        1,
+        2
+      ]
+    }
+  ]
+}

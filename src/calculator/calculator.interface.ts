@@ -14,7 +14,7 @@ export interface CalculatorInterface {
         containerWidth: number,
         containerHeight: number,
         baseImage: BaseImageInterface,
-        zoomValue: number,
+        scaleValue: number,
         standardWidth: number
     ): PainterImageInterface[];
 }

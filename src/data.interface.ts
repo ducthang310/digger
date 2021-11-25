@@ -17,7 +17,7 @@ export enum ZoomLevelStatusInterface {
 export interface ZoomLevelInterface {
     uuid: string;
     name: string;
-    level: number;
+    levelIndex: number;
     status: ZoomLevelStatusInterface;
     image: BaseImageInterface;
 }

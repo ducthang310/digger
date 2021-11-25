@@ -22,13 +22,13 @@ export class Calculator implements CalculatorInterface {
         containerWidth: number,
         containerHeight: number,
         baseImage: BaseImageInterface,
-        zoomValue: number,
+        scaleValue: number,
         standardWidth: number,
         baseImageSize: number = BASE_IMAGE_SIZE
     ): PainterImageInterface[] {
         const standardHeight = baseImage.height * standardWidth / baseImage.width;
-        const realWidth = standardWidth * zoomValue;
-        const realHeight = standardHeight * zoomValue;
+        const realWidth = standardWidth * scaleValue;
+        const realHeight = standardHeight * scaleValue;
 
         if (
             containerWidth < coordinate.x
@@ -43,29 +43,25 @@ export class Calculator implements CalculatorInterface {
         const startY = 0 <= coordinate.y && coordinate.y <= containerHeight ? 0 : (0 - coordinate.y);
         const endY = (0 - coordinate.y + containerHeight) < realHeight ? (0 - coordinate.y + containerHeight) : realHeight;
 
-
-        console.log('start X ', startX, endX);
-        console.log('start Y ', startY, endY);
-
         const standardImageSize = standardWidth * baseImageSize / baseImage.width;
-        const realImageSize = standardImageSize * zoomValue;
+        const realImageSize = standardImageSize * scaleValue;
 
-        console.log('image sizes: ', standardImageSize, realImageSize);
+        const maxIndexX = Math.ceil(baseImage.width / baseImageSize);
+        const maxIndexY = Math.ceil(baseImage.height / baseImageSize);
 
-        let indexOriginalX = Math.ceil(startX / realImageSize);
+        let indexOriginalX = Math.floor(startX / realImageSize);
         indexOriginalX = indexOriginalX !== 0 ? indexOriginalX : 1;
-        let indexOriginalY = Math.ceil(startY / realImageSize);
+        let indexOriginalY = Math.floor(startY / realImageSize);
         indexOriginalY = indexOriginalY !== 0 ? indexOriginalY : 1;
-        const indexEndX = Math.ceil(endX / realImageSize);
-        const indexEndY = Math.ceil(endY / realImageSize);
+        const indexEndX = Math.min(Math.ceil(endX / realImageSize), maxIndexX);
+        const indexEndY = Math.min(Math.ceil(endY / realImageSize), maxIndexY);
 
-        console.log(indexOriginalX, indexOriginalY, indexEndX, indexEndY)
         const images: PainterImageInterface[] = [];
         for (let i = indexOriginalX; i <= indexEndX; i++) {
             for (let j = indexOriginalY; j <= indexEndY; j++) {
                 const key = `${i}x${j}`;
-                const x = (i - 1) * standardImageSize + coordinate.x;
-                const y = (j - 1) * standardImageSize + coordinate.y;
+                const x = (i - 1) * standardImageSize;
+                const y = (j - 1) * standardImageSize;
                 images.push({
                     uuid: key,
                     url: this.generateSubImageUrl(baseImage.url, key),

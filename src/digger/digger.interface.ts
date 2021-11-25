@@ -7,6 +7,7 @@ export interface DiggerConfigInterface {
     zoomLevels: ZoomLevelInterface[];
     points: PointInterface[];
     apiUrl: string;
+    zoomGap?: number;
 }
 
 export interface DiggerInterface {
@@ -16,8 +17,8 @@ export interface DiggerInterface {
     zoomIn(): void;
     zoomOut(): void;
 
-    cbDragEnd(): void;
-    cbScale(): void;
+    cbDragEnd(position: {x: number, y: number} | undefined): void;
+    cbScale(newScale: number, position: {x: number, y: number}): void;
 
     cbPointDragEnd(): void;
     cbPointHover(): void;

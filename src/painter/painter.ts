@@ -71,7 +71,17 @@ export class Painter implements PainterInterface {
                 });
             })
             this.stage.batchDraw();
+            if (this.config.events && this.config.events.scale) {
+                this.config.events.scale(newScale, newPos);
+            }
         });
+        if (this.config.events && this.config.events.dragend) {
+            this.stage.on('dragend', () => {
+                if (this.config.events && this.config.events.dragend) {
+                    this.config.events.dragend(this.stage.position());
+                }
+            });
+        }
     }
 
     reset(): void {
@@ -87,20 +97,27 @@ export class Painter implements PainterInterface {
     }
 
     drawImages(images: PainterImageInterface[], levelUuid: string): void {
+        const levels: Konva.Group[] = this.getLevels();
+        levels.forEach(level => {
+            level.zIndex(0);
+        });
         const level = this.getLevelByUuid(levelUuid) ?? this.createLevel(levelUuid);
+        level.zIndex(1);
         images.forEach(image => {
-            const imageObj = new Image();
-            imageObj.onload = () => {
-                const konImage = new Konva.Image({
-                    x: image.position.x,
-                    y: image.position.y,
-                    width: image.width,
-                    height: image.height,
-                    image: imageObj,
-                });
-                level && level.add(konImage);
-            };
-            imageObj.src = image.url;
+            if (!this.imageExists(image.uuid)) {
+                const imageObj = new Image();
+                imageObj.onload = () => {
+                    const konImage = new Konva.Image({
+                        x: image.position.x,
+                        y: image.position.y,
+                        width: image.width,
+                        height: image.height,
+                        image: imageObj,
+                    });
+                    level && level.add(konImage);
+                };
+                imageObj.src = image.url;
+            }
         });
     }
 
@@ -161,9 +178,15 @@ export class Painter implements PainterInterface {
         return this.stage.findOne(`#${uuid}`) as Konva.Group;
     }
 
+    private getLevels(): Konva.Group[] {
+        // return this.levelMapper.get(uuid);
+        return this.stage.find('.Level');
+    }
+
     private createLevel(uuid: string): Konva.Group {
         const level = new Konva.Group({
-            id: uuid
+            id: uuid,
+            name: 'Level'
         });
         this.imageLayer.add(level);
         // this.levelMapper.set(uuid, level);
@@ -173,5 +196,9 @@ export class Painter implements PainterInterface {
     private getPointByUuid(uuid: string): Konva.Group | undefined {
         // return this.pointMapper.get(uuid);
         return this.stage.findOne(`#${uuid}`) as Konva.Group;
+    }
+
+    private imageExists(uuid: string): boolean {
+        return !!this.stage.findOne(`#${uuid}`);
     }
 }

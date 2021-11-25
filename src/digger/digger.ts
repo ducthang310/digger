@@ -53,24 +53,24 @@ export class Digger implements DiggerInterface {
 
         // TODO: test
         this.painter.drawImages([
-            {uuid: 'aaa', url: 'https://via.placeholder.com/80x80.png?text=1', position: {x: 0, y: 0}, scale: 1},
-            {uuid: 'bbb', url: 'https://via.placeholder.com/80x80.png?text=2', position: {x: 0, y: 80}, scale: 1},
-            {uuid: 'ccc', url: 'https://via.placeholder.com/80x80.png?text=3', position: {x: 0, y: 160}, scale: 1},
-            {uuid: 'ddd', url: 'https://via.placeholder.com/80x80.png?text=4', position: {x: 80, y: 0}, scale: 1},
-            {uuid: 'eee', url: 'https://via.placeholder.com/80x80.png?text=5', position: {x: 80, y: 80}, scale: 1},
-            {uuid: 'fff', url: 'https://via.placeholder.com/80x80.png?text=6', position: {x: 80, y: 160}, scale: 1},
-            {uuid: 'ggg', url: 'https://via.placeholder.com/80x80.png?text=7', position: {x: 80, y: 240}, scale: 1}
+            {uuid: 'aaa', url: 'https://via.placeholder.com/200x200.png?text=1', position: {x: 0, y: 0}, width: 80, height: 80},
+            {uuid: 'bbb', url: 'https://via.placeholder.com/200x200.png?text=2', position: {x: 0, y: 80}, width: 80, height: 80},
+            {uuid: 'ccc', url: 'https://via.placeholder.com/200x200.png?text=3', position: {x: 0, y: 160}, width: 80, height: 80},
+            {uuid: 'ddd', url: 'https://via.placeholder.com/200x200.png?text=4', position: {x: 80, y: 0}, width: 80, height: 80},
+            {uuid: 'eee', url: 'https://via.placeholder.com/200x200.png?text=5', position: {x: 80, y: 80}, width: 80, height: 80},
+            {uuid: 'fff', url: 'https://via.placeholder.com/200x200.png?text=6', position: {x: 80, y: 160}, width: 80, height: 80},
+            {uuid: 'ggg', url: 'https://via.placeholder.com/200x200.png?text=7', position: {x: 80, y: 240}, width: 80, height: 80}
         ], '111');
 
         setTimeout(() => {
             this.painter.drawImages([
-                {uuid: 'qqq', url: 'https://via.placeholder.com/20/0000FF/fff?text=1', position: {x: 0, y: 0}, scale: 1},
-                {uuid: 'www', url: 'https://via.placeholder.com/20/0000FF/fff?text=2', position: {x: 20, y: 0}, scale: 1},
-                {uuid: 'rrr', url: 'https://via.placeholder.com/20/0000FF/fff?text=3', position: {x: 40, y: 0}, scale: 1},
-                {uuid: 'ttt', url: 'https://via.placeholder.com/20/0000FF/fff?text=4', position: {x: 60, y: 0}, scale: 1},
-                {uuid: 'yyy', url: 'https://via.placeholder.com/20/0000FF/fff?text=5', position: {x: 0, y: 20}, scale: 1},
-                {uuid: 'uuu', url: 'https://via.placeholder.com/20/0000FF/fff?text=6', position: {x: 0, y: 40}, scale: 1},
-                {uuid: 'iii', url: 'https://via.placeholder.com/20/0000FF/fff?text=7', position: {x: 0, y: 60}, scale: 1}
+                {uuid: 'qqq', url: 'https://via.placeholder.com/40/0000FF/fff?text=1', position: {x: 0, y: 0}, width: 20, height: 20},
+                {uuid: 'www', url: 'https://via.placeholder.com/40/0000FF/fff?text=2', position: {x: 20, y: 0}, width: 20, height: 20},
+                {uuid: 'rrr', url: 'https://via.placeholder.com/40/0000FF/fff?text=3', position: {x: 40, y: 0}, width: 20, height: 20},
+                {uuid: 'ttt', url: 'https://via.placeholder.com/40/0000FF/fff?text=4', position: {x: 60, y: 0}, width: 20, height: 20},
+                {uuid: 'yyy', url: 'https://via.placeholder.com/40/0000FF/fff?text=5', position: {x: 0, y: 20}, width: 20, height: 20},
+                {uuid: 'uuu', url: 'https://via.placeholder.com/40/0000FF/fff?text=6', position: {x: 0, y: 40}, width: 20, height: 20},
+                {uuid: 'iii', url: 'https://via.placeholder.com/40/0000FF/fff?text=7', position: {x: 0, y: 60}, width: 20, height: 20}
             ], '222');
         }, 3000);
 
@@ -100,7 +100,8 @@ export class Digger implements DiggerInterface {
             coordinate,
             this.applyBoundary(container.clientWidth), this.applyBoundary(container.clientHeight),
             zoomLevel.image,
-            zoomValue
+            zoomValue,
+            this.getContainter().clientWidth
         );
         this.painter.drawImages(images, zoomLevel.uuid);
     }

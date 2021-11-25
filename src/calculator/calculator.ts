@@ -2,7 +2,7 @@ import { CalculatorInterface } from './calculator.interface';
 import { BaseImageInterface } from '../data.interface';
 import { PainterImageInterface } from '../painter/painter.interface';
 
-export const BaseImageSize = 250;
+export const BASE_IMAGE_SIZE = 256;
 
 export class Calculator implements CalculatorInterface {
     setCoordinate(): void {
@@ -23,7 +23,8 @@ export class Calculator implements CalculatorInterface {
         containerHeight: number,
         baseImage: BaseImageInterface,
         zoomValue: number,
-        standardWidth: number
+        standardWidth: number,
+        baseImageSize: number = BASE_IMAGE_SIZE
     ): PainterImageInterface[] {
         const standardHeight = baseImage.height * standardWidth / baseImage.width;
         const realWidth = standardWidth * zoomValue;
@@ -46,7 +47,7 @@ export class Calculator implements CalculatorInterface {
         console.log('start X ', startX, endX);
         console.log('start Y ', startY, endY);
 
-        const standardImageSize = standardWidth * BaseImageSize / baseImage.width;
+        const standardImageSize = standardWidth * baseImageSize / baseImage.width;
         const realImageSize = standardImageSize * zoomValue;
 
         console.log('image sizes: ', standardImageSize, realImageSize);
@@ -59,7 +60,7 @@ export class Calculator implements CalculatorInterface {
         const indexEndY = Math.ceil(endY / realImageSize);
 
         console.log(indexOriginalX, indexOriginalY, indexEndX, indexEndY)
-        const images = [];
+        const images: PainterImageInterface[] = [];
         for (let i = indexOriginalX; i <= indexEndX; i++) {
             for (let j = indexOriginalY; j <= indexEndY; j++) {
                 const key = `${i}x${j}`;
@@ -72,7 +73,8 @@ export class Calculator implements CalculatorInterface {
                         x,
                         y
                     },
-                    scale: 1,
+                    width: standardImageSize,
+                    height: standardImageSize
                 });
             }
         }

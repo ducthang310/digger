@@ -8,7 +8,8 @@ export interface PainterImageInterface {
     uuid: string;
     url: string;
     position: {x: number, y: number};
-    scale: number;
+    width: number;
+    height: number;
 }
 
 export interface PainterPointInterface {

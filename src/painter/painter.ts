@@ -94,9 +94,9 @@ export class Painter implements PainterInterface {
                 const konImage = new Konva.Image({
                     x: image.position.x,
                     y: image.position.y,
+                    width: image.width,
+                    height: image.height,
                     image: imageObj,
-                    scaleX: image.scale,
-                    scaleY: image.scale,
                 });
                 level && level.add(konImage);
             };

@@ -34,7 +34,9 @@ export class Painter implements PainterInterface {
             height: this.config.height,
             draggable: true
         });
-        this.imageLayer = new Konva.Layer();
+        this.imageLayer = new Konva.Layer({
+            listening: false,
+        });
         this.pointLayer = new Konva.Layer();
         this.stage.add(this.imageLayer);
         this.stage.add(this.pointLayer);
@@ -113,8 +115,10 @@ export class Painter implements PainterInterface {
                         width: image.width,
                         height: image.height,
                         image: imageObj,
+                        listening: false,
                     });
                     level && level.add(konImage);
+                    konImage.cache();
                 };
                 imageObj.src = image.url;
             }

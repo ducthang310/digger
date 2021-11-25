@@ -5,6 +5,8 @@ import { PainterInterface } from '../painter/painter.interface';
 import { Painter } from '../painter/painter';
 import { CoordinateInterface, ZoomLevelInterface } from '../data.interface';
 
+export const DEFAULT_ZOOM_GAP = 1.5;
+
 export class Digger implements DiggerInterface {
     config: DiggerConfigInterface;
     calculator: CalculatorInterface;
@@ -15,7 +17,6 @@ export class Digger implements DiggerInterface {
     currentScaleValue: number;
     currentCoordinate: CoordinateInterface;
 
-    boundaryRatio = 1.5;
     timeoutIDRendering: any;
     zoomGap: number;
 
@@ -51,7 +52,7 @@ export class Digger implements DiggerInterface {
             }
         });
 
-        this.zoomGap = this.config.zoomGap || 0.5;
+        this.zoomGap = this.config.zoomGap || DEFAULT_ZOOM_GAP;
         this.zoomLevelMapper = new Map<number, ZoomLevelInterface>();
 
         this.currentScaleValue = 1;
@@ -82,7 +83,7 @@ export class Digger implements DiggerInterface {
             const container = this.getContainer();
             const images = this.calculator.generateRequiredImages(
                 coordinate,
-                this.applyBoundary(container.clientWidth), this.applyBoundary(container.clientHeight),
+                container.clientWidth, container.clientHeight,
                 zoomLevel.image,
                 scaleValue,
                 this.getContainer().clientWidth,
@@ -136,17 +137,8 @@ export class Digger implements DiggerInterface {
         return container;
     }
 
-    /**
-     * Apply boundary for the getting requires images
-     * @param value
-     * @private
-     */
-    private applyBoundary(value: number): number {
-        return this.boundaryRatio * value;
-    }
-
     private scaleToLevelIndex(scale: number): number {
-        return scale < 1 ? 0 : Math.floor((scale - 1) / this.zoomGap);
+        return scale < 1 ? 0 : Math.floor(Math.log(scale) / Math.log(this.zoomGap));
     }
 
     // private levelIndexToScale(index: number): number {

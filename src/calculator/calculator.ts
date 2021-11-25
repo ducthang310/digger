@@ -3,6 +3,7 @@ import { BaseImageInterface } from '../data.interface';
 import { PainterImageInterface } from '../painter/painter.interface';
 
 export const BASE_IMAGE_SIZE = 256;
+export const DEFAULT_BOUNDARY_RATIO = 1.5;
 
 export class Calculator implements CalculatorInterface {
     setCoordinate(): void {
@@ -24,7 +25,8 @@ export class Calculator implements CalculatorInterface {
         baseImage: BaseImageInterface,
         scaleValue: number,
         standardWidth: number,
-        baseImageSize: number = BASE_IMAGE_SIZE
+        baseImageSize: number = BASE_IMAGE_SIZE,
+        boundary: number = DEFAULT_BOUNDARY_RATIO
     ): PainterImageInterface[] {
         const standardHeight = baseImage.height * standardWidth / baseImage.width;
         const realWidth = standardWidth * scaleValue;
@@ -53,8 +55,18 @@ export class Calculator implements CalculatorInterface {
         indexOriginalX = indexOriginalX !== 0 ? indexOriginalX : 1;
         let indexOriginalY = Math.floor(startY / realImageSize);
         indexOriginalY = indexOriginalY !== 0 ? indexOriginalY : 1;
-        const indexEndX = Math.min(Math.ceil(endX / realImageSize), maxIndexX);
-        const indexEndY = Math.min(Math.ceil(endY / realImageSize), maxIndexY);
+        let indexEndX = Math.min(Math.ceil(endX / realImageSize), maxIndexX);
+        let indexEndY = Math.min(Math.ceil(endY / realImageSize), maxIndexY);
+
+        // Apply boundary
+        if (boundary > 1) {
+            const additionalX = Math.ceil((boundary - 1) * (indexEndX - indexOriginalX));
+            indexOriginalX = Math.max(1, indexOriginalX - additionalX);
+            indexEndX = Math.min(maxIndexX, indexEndX + additionalX);
+            const additionalY = Math.ceil((boundary - 1) * (indexEndY - indexOriginalY));
+            indexOriginalY = Math.max(1, indexOriginalY - additionalY);
+            indexEndY = Math.min(maxIndexY, indexEndY + additionalY);
+        }
 
         const images: PainterImageInterface[] = [];
         for (let i = indexOriginalX; i <= indexEndX; i++) {

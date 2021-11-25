@@ -36,6 +36,7 @@ export class Painter implements PainterInterface {
         });
         this.imageLayer = new Konva.Layer({
             listening: false,
+            id: 'image-layers'
         });
         this.pointLayer = new Konva.Layer();
         this.stage.add(this.imageLayer);
@@ -99,12 +100,9 @@ export class Painter implements PainterInterface {
     }
 
     drawImages(images: PainterImageInterface[], levelUuid: string): void {
-        const levels: Konva.Group[] = this.getLevels();
-        levels.forEach(level => {
-            level.zIndex(0);
-        });
         const level = this.getLevelByUuid(levelUuid) ?? this.createLevel(levelUuid);
-        level.zIndex(1);
+        const children = this.imageLayer.children ?? [];
+        level.zIndex(children.length - 1);
         images.forEach(image => {
             if (!this.imageExists(image.uuid)) {
                 const imageObj = new Image();
@@ -180,11 +178,6 @@ export class Painter implements PainterInterface {
     private getLevelByUuid(uuid: string): Konva.Group | undefined {
         // return this.levelMapper.get(uuid);
         return this.stage.findOne(`#${uuid}`) as Konva.Group;
-    }
-
-    private getLevels(): Konva.Group[] {
-        // return this.levelMapper.get(uuid);
-        return this.stage.find('.Level');
     }
 
     private createLevel(uuid: string): Konva.Group {

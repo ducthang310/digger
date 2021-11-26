@@ -64,6 +64,19 @@ export class Digger implements DiggerInterface {
             this.currentZoomLevel = this.config.zoomLevels[0];
             this.render(this.currentZoomLevel, this.currentScaleValue, this.currentCoordinate);
         }
+
+        if (Array.isArray(this.config.points) && this.config.points.length) {
+            this.painter.drawPoints(this.config.points.map(p => {
+                return {
+                    uuid: p.uuid,
+                    text: p.text,
+                    position: p.coordinate,
+                    rotation: p.text_rotation,
+                    textColor: p.text_color,
+                    primaryColor: p.primary_color
+                }
+            }));
+        }
     }
 
     private render(zoomLevel: ZoomLevelInterface, scaleValue: number, coordinate?: CoordinateInterface): void {

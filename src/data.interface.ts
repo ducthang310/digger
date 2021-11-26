@@ -37,6 +37,8 @@ export interface PointInterface {
     type: PointType;
     text?: string;
     text_rotation?: number;
+    primary_color?: string;
+    text_color?: string;
     title: string;
     description: string;
     meta_data: {[key: string]: any};

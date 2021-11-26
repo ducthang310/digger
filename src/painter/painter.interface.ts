@@ -20,9 +20,17 @@ export interface PainterImageInterface {
 
 export interface PainterPointInterface {
     uuid: string;
-    text: string;
+    text?: string;
     position: {x: number, y: number};
-    rotation: number;
+    rotation?: number;
+    primaryColor?: string;
+    textColor?: string;
+}
+
+export interface TooltipConfig {
+    primaryColor?: string;
+    textColor?: string;
+    text: string;
 }
 
 export interface PainterInterface {

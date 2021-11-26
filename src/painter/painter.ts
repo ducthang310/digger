@@ -2,7 +2,7 @@ import {
     PainterConfigInterface,
     PainterImageInterface,
     PainterInterface,
-    PainterPointInterface
+    PainterPointInterface, TooltipConfig
 } from './painter.interface';
 import Konva from 'konva';
 
@@ -125,26 +125,28 @@ export class Painter implements PainterInterface {
 
     drawPoints(points: PainterPointInterface[]): void {
         points.forEach(pointData => {
+            const primaryColor = pointData.primaryColor ?? '#0271FF';
+            const strokeColor = this.hex2rgba(primaryColor, 0.2);
             const point = new Konva.Group({
                 id: pointData.uuid,
-                name: 'Point'
+                name: 'Point',
+                draggable: true,
+                rotation: pointData.rotation,
             });
             const circle = new Konva.Circle({
                 radius: 10,
-                fill: 'red',
-                stroke: 'gray',
-                strokeWidth: 1,
+                fill: primaryColor,
+                stroke: strokeColor,
+                strokeWidth: 12,
             });
             point.add(circle);
 
             if (pointData.text) {
-                const text = new Konva.Text({
+                point.add(this.createToolTip({
                     text: pointData.text,
-                    fontSize: 18,
-                    fontFamily: 'Calibri',
-                    fill: 'green',
-                });
-                point.add(text);
+                    primaryColor: pointData.primaryColor,
+                    textColor: pointData.textColor
+                }));
             }
             point.setPosition(pointData.position);
             this.pointLayer.add(point);
@@ -159,7 +161,7 @@ export class Painter implements PainterInterface {
         const konText: Konva.Text = point.findOne('Text');
         if (!pointData.text && konText) {
             konText.destroy();
-        } else if (pointData) {
+        } else if (pointData.text) {
             if (!konText) {
                 const newKonText = new Konva.Text({
                     text: pointData.text,
@@ -197,5 +199,79 @@ export class Painter implements PainterInterface {
 
     private imageExists(uuid: string): boolean {
         return !!this.stage.findOne(`#${uuid}`);
+    }
+
+    private createToolTip(tooltipConfig: TooltipConfig): Konva.Group {
+        const primaryColor = tooltipConfig.primaryColor ?? '#0271FF';
+        const textColor = tooltipConfig.textColor ?? '#ffffff';
+        const paddingLeft = 15;
+        const paddingTop = 8;
+        const triangleWidth = 14;
+        const triangleHeight = 7;
+        const toolTip = new Konva.Group({
+            name: 'Tooltip',
+            x: 0,
+            y: 0
+        });
+        const simpleText = new Konva.Text({
+            x: paddingLeft,
+            y: paddingTop,
+            text: tooltipConfig.text,
+            fontSize: 18,
+            fill: textColor,
+        });
+        const rect = new Konva.Rect({
+            x: 0,
+            y: 0,
+            width: 140,
+            height: 40,
+            fill: primaryColor,
+            shadowColor: '#000000',
+            shadowBlur: 5,
+            shadowOffset: { x: 0, y: 2 },
+            shadowOpacity: 0.25,
+            cornerRadius: 3,
+        });//0px 2px 5px 0 rgb(0 0 0 / 25%)
+
+        const rectWidth = simpleText.width() + paddingLeft * 2;
+        const rectHeight = simpleText.height() + paddingTop * 2;
+        rect.width(rectWidth);
+        rect.height(rectHeight);
+
+        const triangle = new Konva.Shape({
+            sceneFunc: function (context, shape) {
+                context.beginPath();
+                context.moveTo((rectWidth - triangleWidth) / 2, rectHeight);
+                context.lineTo((rectWidth + triangleWidth) / 2, rectHeight);
+                context.lineTo(rectWidth / 2, rectHeight + triangleHeight);
+                context.closePath();
+                context.fillStrokeShape(shape);
+            },
+            fill: primaryColor,
+            shadowColor: '#000000',
+            shadowBlur: 5,
+            shadowOffset: { x: 0, y: 2 },
+            shadowOpacity: 0.25,
+        });
+
+        toolTip.add(rect);
+        toolTip.add(simpleText);
+        toolTip.add(triangle);
+        toolTip.setPosition({
+            x: -1 * rectWidth / 2,
+            y: -1 * (rectHeight + 20)
+        });
+
+        return toolTip;
+    }
+
+    private hex2rgba(hex: string, alpha = 1): string {
+        const parts = hex.match(/\w\w/g);
+        if (parts) {
+            const [r, g, b] = parts.map(x => parseInt(x, 16));
+            return `rgba(${r},${g},${b},${alpha})`;
+        } else {
+            return 'rgba(0, 0, 0, 1)';
+        }
     }
 }

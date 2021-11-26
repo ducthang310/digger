@@ -38,9 +38,12 @@ export class Painter implements PainterInterface {
             listening: false,
             id: 'image-layers'
         });
-        this.pointLayer = new Konva.Layer();
+        this.pointLayer = new Konva.Layer({
+            id: 'point-layers'
+        });
         this.stage.add(this.imageLayer);
         this.stage.add(this.pointLayer);
+
         // this.imageLayer.draw();
         this.initEvents();
     }
@@ -104,10 +107,12 @@ export class Painter implements PainterInterface {
         const children = this.imageLayer.children ?? [];
         level.zIndex(children.length - 1);
         images.forEach(image => {
-            if (!this.imageExists(image.uuid)) {
+            const imageId = level.id() + '-' + image.uuid;
+            if (!this.imageExists(imageId)) {
                 const imageObj = new Image();
                 imageObj.onload = () => {
                     const konImage = new Konva.Image({
+                        id: imageId,
                         x: image.position.x,
                         y: image.position.y,
                         width: image.width,
@@ -197,8 +202,8 @@ export class Painter implements PainterInterface {
         return this.stage.findOne(`#${uuid}`) as Konva.Group;
     }
 
-    private imageExists(uuid: string): boolean {
-        return !!this.stage.findOne(`#${uuid}`);
+    private imageExists(id: string): boolean {
+        return !!this.stage.findOne(`#${id}`);
     }
 
     private createToolTip(tooltipConfig: TooltipConfig): Konva.Group {

@@ -1,13 +1,10 @@
+import { DiggerEventCallbacksInterface } from '../common.interface';
+
 export interface PainterConfigInterface {
     containerId: string;
     width: number;
     height: number;
-    events?: {
-        dragstart?: () => void,
-        dragMove?: () => void,
-        dragend?: (position: {x: number, y: number} | undefined) => void,
-        scale?: (newScale: number, position: {x: number, y: number}) => void,
-    }
+    events?: DiggerEventCallbacksInterface
 }
 
 export interface PainterImageInterface {

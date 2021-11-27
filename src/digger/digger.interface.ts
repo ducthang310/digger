@@ -1,4 +1,5 @@
 import { PointInterface, ZoomLevelInterface } from '../data.interface';
+import { DiggerEventCallbacksInterface } from '../common.interface';
 
 export interface DiggerConfigInterface {
     containerId: string;
@@ -8,6 +9,7 @@ export interface DiggerConfigInterface {
     points: PointInterface[];
     apiUrl: string;
     zoomGap?: number;
+    events?: DiggerEventCallbacksInterface;
 }
 
 export interface DiggerInterface {
@@ -19,8 +21,4 @@ export interface DiggerInterface {
 
     cbDragEnd(position: {x: number, y: number} | undefined): void;
     cbScale(newScale: number, position: {x: number, y: number}): void;
-
-    cbPointDragEnd(): void;
-    cbPointHover(): void;
-    cbPointClick(): void;
 }

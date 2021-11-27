@@ -44,9 +44,10 @@ export class Digger implements DiggerInterface {
         this.calculator = new Calculator();
         this.painter = new Painter({
             containerId: this.config.containerId,
-            width: this.config.width,
-            height: this.config.height,
+            width: this.getContainer().clientWidth,
+            height: this.getContainer().clientHeight,
             events: {
+                ...this.config.events,
                 dragend: this.cbDragEnd.bind(this),
                 scale: this.cbScale.bind(this)
             }
@@ -128,18 +129,6 @@ export class Digger implements DiggerInterface {
         this.currentZoomLevel = zl ? zl : this.currentZoomLevel;
         this.currentScaleValue = newScale;
         this.render(this.currentZoomLevel, this.currentScaleValue, this.currentCoordinate);
-    }
-
-    cbPointDragEnd(): void {
-        //
-    }
-
-    cbPointHover(): void {
-        //
-    }
-
-    cbPointClick(): void {
-        //
     }
 
     private getContainer(): HTMLElement {

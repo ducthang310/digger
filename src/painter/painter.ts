@@ -144,6 +144,21 @@ export class Painter implements PainterInterface {
                 stroke: strokeColor,
                 strokeWidth: 12,
             });
+            circle.setAttr('point_uuid', pointData.uuid);
+            circle.on('mouseenter', () => {
+                this.stage.container().style.cursor = 'pointer';
+            });
+
+            circle.on('mouseleave', () => {
+                this.stage.container().style.cursor = 'default';
+            });
+
+            circle.on('click', () => {
+                if (this.config.events?.pointClick) {
+                    this.config.events.pointClick(pointData.uuid);
+                }
+            });
+
             point.add(circle);
 
             if (pointData.text) {

@@ -111,11 +111,14 @@ export class Digger implements DiggerInterface {
     }
 
     zoomIn(): void {
-        this.painter.zoomIn();
+        this.currentScaleValue += 1;
+        console.log(this.currentScaleValue);
+        this.painter.scale(this.currentScaleValue);
     }
 
     zoomOut(): void {
-        this.painter.zoomOut();
+        this.currentScaleValue = this.currentScaleValue <= 2 ? 1 : (this.currentScaleValue - 1);
+        this.painter.scale(this.currentScaleValue);
     }
 
     cbDragEnd(position: {x: number, y: number} | undefined): void {

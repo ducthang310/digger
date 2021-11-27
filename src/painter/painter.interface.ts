@@ -35,8 +35,7 @@ export interface PainterInterface {
     init(config: PainterConfigInterface): void;
 
     reset(): void;
-    zoomIn(): void;
-    zoomOut(): void;
+    scale(value: number): void;
 
     drawImages(images: PainterImageInterface[], levelUuid: string): void;
     drawPoints(points: PainterPointInterface[]): void;

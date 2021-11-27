@@ -3,8 +3,6 @@ import { DiggerEventCallbacksInterface } from '../common.interface';
 
 export interface DiggerConfigInterface {
     containerId: string;
-    width: number;
-    height: number;
     zoomLevels: ZoomLevelInterface[];
     points: PointInterface[];
     apiUrl: string;

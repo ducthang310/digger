@@ -94,12 +94,8 @@ export class Painter implements PainterInterface {
         //
     }
 
-    zoomIn(): void {
-        //
-    }
-
-    zoomOut(): void {
-        //
+    scale(value: number): void {
+        this.stage.scale({x: value, y: value});
     }
 
     drawImages(images: PainterImageInterface[], levelUuid: string): void {

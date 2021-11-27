@@ -24,7 +24,8 @@ export interface ZoomLevelInterface {
 
 export enum PointType {
     NORMAL,
-    SPECIAL
+    BEST_PRACTICE,
+    MAINTENANCE
 }
 
 export interface CoordinateInterface {

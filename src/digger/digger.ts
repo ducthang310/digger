@@ -112,7 +112,6 @@ export class Digger implements DiggerInterface {
 
     zoomIn(): void {
         this.currentScaleValue += 1;
-        console.log(this.currentScaleValue);
         this.painter.scale(this.currentScaleValue);
     }
 

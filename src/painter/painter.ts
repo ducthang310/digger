@@ -68,14 +68,7 @@ export class Painter implements PainterInterface {
                 y: pointer.y - mousePointTo.y * newScale,
             };
             this.stage.position(newPos);
-
-            const circles = this.stage.find('.Point');
-            circles.forEach(c => {
-                c.setAttrs({
-                    scaleX: 1 / this.stage.scaleX(),
-                    scaleY: 1 / this.stage.scaleY()
-                });
-            })
+            this.keepThePointSize();
             this.stage.batchDraw();
             if (this.config.events && this.config.events.scale) {
                 this.config.events.scale(newScale, newPos);
@@ -94,8 +87,48 @@ export class Painter implements PainterInterface {
         //
     }
 
+    private keepThePointSize(): void {
+        const points = this.stage.find('.Point');
+        points.forEach(p => {
+            p.setAttrs({
+                scaleX: 1 / this.stage.scaleX(),
+                scaleY: 1 / this.stage.scaleY()
+            });
+        });
+    }
+
     scale(value: number): void {
-        this.stage.scale({x: value, y: value});
+        const oldScale = this.stage.scaleX();
+        const center = {
+            x: this.stage.width() / 2,
+            y: this.stage.height() / 2,
+        };
+
+        const relatedTo = {
+            x: (center.x - this.stage.x()) / oldScale,
+            y: (center.y - this.stage.y()) / oldScale,
+        };
+        const newPos = {
+            x: center.x - relatedTo.x * value,
+            y: center.y - relatedTo.y * value,
+        };
+        const tween = new Konva.Tween({
+            node: this.stage,
+            duration: 1,
+            easing: Konva.Easings.EaseInOut,
+            onUpdate: () => {
+                if (this.config.events && this.config.events.scale) {
+                    this.config.events.scale(this.stage.scaleX(), this.stage.position());
+                }
+                this.keepThePointSize();
+            },
+            onFinish: () => tween.destroy(),
+            scaleX: value,
+            scaleY: value,
+            x: newPos.x,
+            y: newPos.y
+        });
+        tween.play();
     }
 
     drawImages(images: PainterImageInterface[], levelUuid: string): void {
@@ -166,6 +199,13 @@ export class Painter implements PainterInterface {
             }
             point.setPosition(pointData.position);
             this.pointLayer.add(point);
+            if (this.config.events && this.config.events.pointDragend) {
+                point.on('dragend', (evt) => {
+                    if (this.config.events && this.config.events.pointDragend) {
+                        this.config.events.pointDragend(pointData.uuid, evt.currentTarget.getPosition());
+                    }
+                });
+            }
         });
     }
 
@@ -220,65 +260,44 @@ export class Painter implements PainterInterface {
     private createToolTip(tooltipConfig: TooltipConfig): Konva.Group {
         const primaryColor = tooltipConfig.primaryColor ?? '#0271FF';
         const textColor = tooltipConfig.textColor ?? '#ffffff';
-        const paddingLeft = 15;
-        const paddingTop = 8;
-        const triangleWidth = 14;
-        const triangleHeight = 7;
-        const toolTip = new Konva.Group({
-            name: 'Tooltip',
+
+        const tooltip = new Konva.Label({
+            visible: true,
+            listening: false,
+        });
+
+        tooltip.add(
+            new Konva.Tag({
+                pointerDirection: 'down',
+                pointerWidth: 14,
+                pointerHeight: 7,
+                lineJoin: 'round',
+                width: 140,
+                height: 40,
+                fill: primaryColor,
+                shadowColor: '#000000',
+                shadowBlur: 5,
+                shadowOffset: { x: 0, y: 2 },
+                shadowOpacity: 0.25,
+                cornerRadius: 6,
+            })
+        );
+
+        tooltip.add(
+            new Konva.Text({
+                text: tooltipConfig.text,
+                fontSize: 18,
+                fill: textColor,
+                padding: 15,
+            })
+        );
+
+        tooltip.setPosition({
             x: 0,
-            y: 0
-        });
-        const simpleText = new Konva.Text({
-            x: paddingLeft,
-            y: paddingTop,
-            text: tooltipConfig.text,
-            fontSize: 18,
-            fill: textColor,
-        });
-        const rect = new Konva.Rect({
-            x: 0,
-            y: 0,
-            width: 140,
-            height: 40,
-            fill: primaryColor,
-            shadowColor: '#000000',
-            shadowBlur: 5,
-            shadowOffset: { x: 0, y: 2 },
-            shadowOpacity: 0.25,
-            cornerRadius: 3,
-        });//0px 2px 5px 0 rgb(0 0 0 / 25%)
-
-        const rectWidth = simpleText.width() + paddingLeft * 2;
-        const rectHeight = simpleText.height() + paddingTop * 2;
-        rect.width(rectWidth);
-        rect.height(rectHeight);
-
-        const triangle = new Konva.Shape({
-            sceneFunc: function (context, shape) {
-                context.beginPath();
-                context.moveTo((rectWidth - triangleWidth) / 2, rectHeight);
-                context.lineTo((rectWidth + triangleWidth) / 2, rectHeight);
-                context.lineTo(rectWidth / 2, rectHeight + triangleHeight);
-                context.closePath();
-                context.fillStrokeShape(shape);
-            },
-            fill: primaryColor,
-            shadowColor: '#000000',
-            shadowBlur: 5,
-            shadowOffset: { x: 0, y: 2 },
-            shadowOpacity: 0.25,
+            y: -20
         });
 
-        toolTip.add(rect);
-        toolTip.add(simpleText);
-        toolTip.add(triangle);
-        toolTip.setPosition({
-            x: -1 * rectWidth / 2,
-            y: -1 * (rectHeight + 20)
-        });
-
-        return toolTip;
+        return tooltip;
     }
 
     private hex2rgba(hex: string, alpha = 1): string {

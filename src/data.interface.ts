@@ -1,24 +1,23 @@
+export interface EventCallbacksInterface {
+    dragstart?: () => void,
+    dragMove?: () => void,
+    dragend?: (position: {x: number, y: number} | undefined) => void,
+    scale?: (newScale: number, position: {x: number, y: number}) => void,
+    pointClick?: (uuid: string) => void,
+    pointDragend?: (uuid: string, position: {x: number, y: number}) => void,
+}
 export interface BaseImageInterface {
     uuid: string;
     name: string;
-    path: string;
     url: string;
     width: number;
     height: number;
-    size_in_kbs?: number;
-}
-
-export enum ZoomLevelStatusInterface {
-    INACTIVE,
-    Active,
-    PROCESSING_IMAGE
 }
 
 export interface ZoomLevelInterface {
     uuid: string;
     name: string;
     levelIndex: number;
-    status: ZoomLevelStatusInterface;
     image: BaseImageInterface;
 }
 
@@ -28,7 +27,7 @@ export enum PointType {
     MAINTENANCE
 }
 
-export interface CoordinateInterface {
+export interface Vector2d {
     x: number;
     y: number;
 }
@@ -43,28 +42,6 @@ export interface PointInterface {
     title: string;
     description: string;
     meta_data: {[key: string]: any};
-    coordinate: CoordinateInterface;
+    position: Vector2d;
     visible_in_zoom_levels: number[];
-}
-
-export interface ToolDataInterface {
-    zoom_levels: ZoomLevelInterface[];
-    points: PointInterface[];
-}
-
-export enum ToolStatus {
-    DRAFT,
-    PUBLISHED_ACTIVE,
-    PUBLISHED_INACTIVE
-}
-
-export interface ToolInterface {
-    uuid: string;
-    status: ToolStatus;
-    name: string;
-    description: string;
-    data: ToolDataInterface;
-    created_at: string;
-    updated_at: string;
-    deleted_at: string;
 }

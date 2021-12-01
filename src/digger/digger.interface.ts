@@ -1,13 +1,11 @@
-import { PointInterface, ZoomLevelInterface } from '../data.interface';
-import { DiggerEventCallbacksInterface } from '../common.interface';
+import { EventCallbacksInterface, PointInterface, ZoomLevelInterface } from '../data.interface';
 
 export interface DiggerConfigInterface {
     containerId: string;
     zoomLevels: ZoomLevelInterface[];
     points: PointInterface[];
-    apiUrl: string;
     zoomGap?: number;
-    events?: DiggerEventCallbacksInterface;
+    events?: EventCallbacksInterface;
 }
 
 export interface DiggerInterface {

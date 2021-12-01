@@ -1,10 +1,10 @@
-import { DiggerEventCallbacksInterface } from '../common.interface';
+import { EventCallbacksInterface } from '../data.interface';
 
 export interface PainterConfigInterface {
     containerId: string;
     width: number;
     height: number;
-    events?: DiggerEventCallbacksInterface
+    events?: EventCallbacksInterface;
 }
 
 export interface PainterImageInterface {

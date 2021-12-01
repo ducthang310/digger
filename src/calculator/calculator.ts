@@ -1,25 +1,14 @@
 import { CalculatorInterface } from './calculator.interface';
-import { BaseImageInterface } from '../data.interface';
+import { BaseImageInterface, Vector2d } from '../data.interface';
 import { PainterImageInterface } from '../painter/painter.interface';
 
 export const BASE_IMAGE_SIZE = 256;
 export const DEFAULT_BOUNDARY_RATIO = 1.5;
 
 export class Calculator implements CalculatorInterface {
-    setCoordinate(): void {
-        //
-    }
-
-    coordinateToPosition(): void {
-        //
-    }
-
-    positionToCoordinate(): void {
-        //
-    }
 
     generateRequiredImages(
-        coordinate: { x: number, y: number },
+        position: Vector2d,
         containerWidth: number,
         containerHeight: number,
         baseImage: BaseImageInterface,
@@ -33,17 +22,17 @@ export class Calculator implements CalculatorInterface {
         const realHeight = standardHeight * scaleValue;
 
         if (
-            containerWidth < coordinate.x
-            || (coordinate.x + realWidth) < 0
-            || containerHeight < coordinate.y
-            || (coordinate.y + realHeight) < 0) {
+            containerWidth < position.x
+            || (position.x + realWidth) < 0
+            || containerHeight < position.y
+            || (position.y + realHeight) < 0) {
             return [];
         }
 
-        const startX = 0 <= coordinate.x && coordinate.x <= containerWidth ? 0 : (0 - coordinate.x);
-        const endX = (0 - coordinate.x + containerWidth) < realWidth ? (0 - coordinate.x + containerWidth) : realWidth;
-        const startY = 0 <= coordinate.y && coordinate.y <= containerHeight ? 0 : (0 - coordinate.y);
-        const endY = (0 - coordinate.y + containerHeight) < realHeight ? (0 - coordinate.y + containerHeight) : realHeight;
+        const startX = 0 <= position.x && position.x <= containerWidth ? 0 : (0 - position.x);
+        const endX = (0 - position.x + containerWidth) < realWidth ? (0 - position.x + containerWidth) : realWidth;
+        const startY = 0 <= position.y && position.y <= containerHeight ? 0 : (0 - position.y);
+        const endY = (0 - position.y + containerHeight) < realHeight ? (0 - position.y + containerHeight) : realHeight;
 
         const standardImageSize = standardWidth * baseImageSize / baseImage.width;
         const realImageSize = standardImageSize * scaleValue;
@@ -89,7 +78,7 @@ export class Calculator implements CalculatorInterface {
         return images;
     }
 
-    generateSubImageUrl(imageUrl: string, key: string): string {
+    private generateSubImageUrl(imageUrl: string, key: string): string {
         const paths = imageUrl.split('.');
         paths[paths.length - 2] += '-' + key;
         return paths.join('.');

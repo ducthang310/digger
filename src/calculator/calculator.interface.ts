@@ -1,16 +1,10 @@
-import { BaseImageInterface } from '../data.interface';
+import { BaseImageInterface, Vector2d } from '../data.interface';
 import { PainterImageInterface } from '../painter/painter.interface';
 
 export interface CalculatorInterface {
 
-    setCoordinate(): void;
-
-    coordinateToPosition(): void;
-
-    positionToCoordinate(): void;
-
     generateRequiredImages(
-        coordinate: { x: number, y: number },
+        position: Vector2d,
         containerWidth: number,
         containerHeight: number,
         baseImage: BaseImageInterface,

@@ -3,7 +3,7 @@ import { Calculator } from '../calculator/calculator';
 import { CalculatorInterface } from '../calculator/calculator.interface';
 import { PainterInterface } from '../painter/painter.interface';
 import { Painter } from '../painter/painter';
-import { CoordinateInterface, ZoomLevelInterface } from '../data.interface';
+import { Vector2d, ZoomLevelInterface } from '../data.interface';
 
 export const DEFAULT_ZOOM_GAP = 1.5;
 
@@ -15,7 +15,7 @@ export class Digger implements DiggerInterface {
 
     currentZoomLevel: ZoomLevelInterface;
     currentScaleValue: number;
-    currentCoordinate: CoordinateInterface;
+    currentPosition: Vector2d;
 
     timeoutIDRendering: any;
     zoomGap: number;
@@ -57,13 +57,13 @@ export class Digger implements DiggerInterface {
         this.zoomLevelMapper = new Map<number, ZoomLevelInterface>();
 
         this.currentScaleValue = 1;
-        this.currentCoordinate = {x: 0, y: 0};
+        this.currentPosition = {x: 0, y: 0};
         if (Array.isArray(this.config.zoomLevels) && this.config.zoomLevels.length) {
             this.config.zoomLevels.forEach(z => {
                 this.zoomLevelMapper.set(z.levelIndex, z);
             });
             this.currentZoomLevel = this.config.zoomLevels[0];
-            this.render(this.currentZoomLevel, this.currentScaleValue, this.currentCoordinate);
+            this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
         }
 
         if (Array.isArray(this.config.points) && this.config.points.length) {
@@ -71,7 +71,7 @@ export class Digger implements DiggerInterface {
                 return {
                     uuid: p.uuid,
                     text: p.text,
-                    position: p.coordinate,
+                    position: p.position,
                     rotation: p.text_rotation,
                     textColor: p.text_color,
                     primaryColor: p.primary_color
@@ -80,7 +80,7 @@ export class Digger implements DiggerInterface {
         }
     }
 
-    private render(zoomLevel: ZoomLevelInterface, scaleValue: number, coordinate?: CoordinateInterface): void {
+    private render(zoomLevel: ZoomLevelInterface, scaleValue: number, position?: Vector2d): void {
         if (!zoomLevel) {
             throw new Error('Zoom level is required');
         }
@@ -91,12 +91,12 @@ export class Digger implements DiggerInterface {
         }
 
         this.timeoutIDRendering = setTimeout(() => {
-            if (!coordinate) {
-                coordinate = {x: 0, y: 0};
+            if (!position) {
+                position = {x: 0, y: 0};
             }
             const container = this.getContainer();
             const images = this.calculator.generateRequiredImages(
-                coordinate,
+                position,
                 container.clientWidth, container.clientHeight,
                 zoomLevel.image,
                 scaleValue,
@@ -121,16 +121,16 @@ export class Digger implements DiggerInterface {
     }
 
     cbDragEnd(position: {x: number, y: number} | undefined): void {
-        this.currentCoordinate = position || {x: 0, y: 0};
-        this.render(this.currentZoomLevel, this.currentScaleValue, this.currentCoordinate);
+        this.currentPosition = position || {x: 0, y: 0};
+        this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
 
     cbScale(newScale: number, position: {x: number, y: number}): void {
-        this.currentCoordinate = position;
+        this.currentPosition = position;
         const zl = this.zoomLevelMapper.get(this.scaleToLevelIndex(newScale));
         this.currentZoomLevel = zl ? zl : this.currentZoomLevel;
         this.currentScaleValue = newScale;
-        this.render(this.currentZoomLevel, this.currentScaleValue, this.currentCoordinate);
+        this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
 
     private getContainer(): HTMLElement {

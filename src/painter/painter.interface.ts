@@ -18,6 +18,7 @@ export interface PainterImageInterface {
 export interface PainterPointInterface {
     uuid: string;
     text?: string;
+    type?: number;
     position: {x: number, y: number};
     rotation?: number;
     primaryColor?: string;

@@ -1,7 +1,7 @@
 import { DiggerConfigInterface, DiggerInterface } from './digger.interface';
 import { Calculator } from '../calculator/calculator';
 import { CalculatorInterface } from '../calculator/calculator.interface';
-import { PainterInterface } from '../painter/painter.interface';
+import { PainterInterface, PainterPointInterface } from '../painter/painter.interface';
 import { Painter } from '../painter/painter';
 import { PointInterface, Vector2d, ZoomLevelInterface } from '../data.interface';
 
@@ -68,21 +68,7 @@ export class Digger implements DiggerInterface {
         }
 
         if (Array.isArray(this.config.points) && this.config.points.length) {
-            this.painter.drawPoints(this.config.points.map(p => {
-                return {
-                    uuid: p.uuid,
-                    text: p.text,
-                    rotation: p.text_rotation,
-                    textColor: p.text_color,
-                    primaryColor: p.primary_color,
-                    draggable: p.draggable,
-                    position: this.calculator.imagePositionToCanvasPosition(
-                        p.position,
-                        STANDARD_WIDTH,
-                        this.getContainer().clientWidth
-                    )
-                }
-            }));
+            this.painter.drawPoints(this.config.points.map(p => this.convertToPainterPoint(p)));
         }
     }
 
@@ -146,21 +132,14 @@ export class Digger implements DiggerInterface {
 
     setPoints(points: PointInterface[]): void {
         this.painter.removeAllPoints();
-        this.painter.drawPoints(points.map(p => ({
-            ...p,
-            position: this.calculator.imagePositionToCanvasPosition(
-                p.position,
-                STANDARD_WIDTH,
-                this.getContainer().clientWidth
-            )
-        })));
+        this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
     }
 
     addPoint(point: PointInterface, offset: Vector2d): void {
-        this.painter.drawPoints([{
+        this.painter.drawPoints([this.convertToPainterPoint({
             ...point,
             position: this.calculator.offsetToPosition(offset, this.currentPosition)
-        }]);
+        })]);
     }
 
     removePoint(uuid: string): void {
@@ -195,5 +174,22 @@ export class Digger implements DiggerInterface {
 
     private scaleToLevelIndex(scale: number): number {
         return scale < 1 ? 0 : Math.floor(Math.log(scale) / Math.log(this.zoomGap));
+    }
+
+    private convertToPainterPoint(data: PointInterface): PainterPointInterface {
+        return {
+            uuid: data.uuid,
+            type: data.type,
+            text: data.text,
+            rotation: data.text_rotation,
+            textColor: data.text_color,
+            primaryColor: data.primary_color,
+            draggable: data.draggable,
+            position: this.calculator.imagePositionToCanvasPosition(
+                data.position,
+                STANDARD_WIDTH,
+                this.getContainer().clientWidth
+            )
+        }
     }
 }

@@ -197,7 +197,7 @@ export class Painter implements PainterInterface {
                     text: pointData.text,
                     primaryColor: pointData.primaryColor,
                     textColor: pointData.textColor
-                }));
+                }, pointData.type));
             }
             point.setPosition(pointData.position);
             this.pointLayer.add(point);
@@ -271,47 +271,89 @@ export class Painter implements PainterInterface {
         return !!this.stage.findOne(`#${id}`);
     }
 
-    private createToolTip(tooltipConfig: TooltipConfig): Konva.Group {
+    private createToolTip(tooltipConfig: TooltipConfig, type?: number): Konva.Group {
         const primaryColor = tooltipConfig.primaryColor ?? DefaultColor;
         const textColor = tooltipConfig.textColor ?? '#ffffff';
+        const paddingLeft = 15;
+        const paddingTop = type && type > 2 ? 14 : 16;
+        let rectWidth = 160;
+        const rectHeight = 40;
+        const triangleWidth = 14;
+        const triangleHeight = 7;
 
-        const tooltip = new Konva.Label({
-            visible: true,
-            listening: false,
-        });
-
-        tooltip.add(
-            new Konva.Tag({
-                pointerDirection: 'down',
-                pointerWidth: 14,
-                pointerHeight: 7,
-                lineJoin: 'round',
-                width: 140,
-                height: 40,
-                fill: primaryColor,
-                shadowColor: '#000000',
-                shadowBlur: 5,
-                shadowOffset: { x: 0, y: 2 },
-                shadowOpacity: 0.25,
-                cornerRadius: 6,
-            })
-        );
-
-        tooltip.add(
-            new Konva.Text({
-                text: tooltipConfig.text,
-                fontSize: 18,
-                fill: textColor,
-                padding: 15,
-            })
-        );
-
-        tooltip.setPosition({
+        const toolTip = new Konva.Group({
+            name: 'Tooltip',
             x: 0,
-            y: -20
+            y: 0,
         });
 
-        return tooltip;
+        const simpleText = new Konva.Text({
+            x: paddingLeft,
+            y: paddingTop,
+            text: tooltipConfig.text,
+            fontSize: 14,
+            fill: textColor,
+            fontStyle: '600'
+        });
+        const radius = type && type > 2 ? [0, 0, 8, 8] : 8;
+        const rect = new Konva.Rect({
+            x: 0,
+            y: 6,
+            width: 160,
+            height: 34,
+            fill: type === 2 ? primaryColor : '#fff',
+            shadowColor: '#BBBBBB',
+            shadowBlur: 14,
+            shadowOffset: { x: 0, y: 2 },
+            shadowOpacity: 0.5,
+            cornerRadius: radius,
+        });//0px 2px 5px 0 rgb(0 0 0 / 25%) 0 2px 14px 0 rgba(187,187,187,0.50)
+
+        const headRect = new Konva.Rect({
+            x: 0,
+            y: 0,
+            width: 140,
+            height: 16,
+            fill: primaryColor,
+            cornerRadius: [8, 8, 0, 0],
+        });
+
+        rect.lineCap('round');
+
+        rectWidth = simpleText.width() + paddingLeft * 2;
+        rect.width(rectWidth);
+        headRect.width(rectWidth);
+
+        const triangle = new Konva.Shape({
+            sceneFunc: function (context, shape) {
+                context.beginPath();
+                context.moveTo((rectWidth - triangleWidth) / 2, rectHeight);
+                context.lineTo((rectWidth + triangleWidth) / 2, rectHeight);
+                context.lineTo(rectWidth / 2, rectHeight + triangleHeight);
+                context.closePath();
+                context.fillStrokeShape(shape);
+            },
+            fill: type === 2 ? primaryColor : '#ffffff',
+            shadowColor: '#000000',
+            shadowBlur: 5,
+            shadowOffset: { x: 0, y: 2 },
+            shadowOpacity: 0.25,
+        });
+
+        if (type && type > 2) {
+            toolTip.add(headRect);
+        } else {
+            headRect.destroy();
+        }
+        toolTip.add(rect);
+        toolTip.add(simpleText);
+        toolTip.add(triangle);
+        toolTip.setPosition({
+            x: -1 * rectWidth / 2,
+            y: -1 * (rectHeight + 26)
+        });
+
+        return toolTip;
     }
 
     private hex2rgba(hex: string, alpha = 1): string {

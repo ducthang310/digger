@@ -13,5 +13,12 @@ export interface CalculatorInterface {
         boundary?: number
     ): PainterImageInterface[];
 
+    /**
+     * Offset: the container position
+     * @param offset
+     * @param currentPosition
+     */
     offsetToPosition(offset: Vector2d, currentPosition: Vector2d): Vector2d;
+
+    imagePositionToCanvasPosition(imgPos: Vector2d, imageWidth: number, standardWidth: number): Vector2d;
 }

@@ -82,6 +82,17 @@ export class Calculator implements CalculatorInterface {
         return {x: offset.x - currentPosition.x, y: offset.y - currentPosition.y};
     }
 
+    imagePositionToCanvasPosition(imgPos: Vector2d, imageWidth: number, standardWidth: number): Vector2d {
+        if (!imageWidth) {
+            return {x: 0, y: 0};
+        }
+        const ratio = standardWidth / imageWidth;
+        return {
+            x: imgPos.x * ratio,
+            y: imgPos.y * ratio
+        }
+    }
+
     private generateSubImageUrl(imageUrl: string, key: string): string {
         const paths = imageUrl.split('.');
         paths[paths.length - 2] += '-' + key;

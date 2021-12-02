@@ -6,6 +6,7 @@ import { Painter } from '../painter/painter';
 import { PointInterface, Vector2d, ZoomLevelInterface } from '../data.interface';
 
 export const DEFAULT_ZOOM_GAP = 1.5;
+export const STANDARD_WIDTH = 1024;
 
 export class Digger implements DiggerInterface {
     config: DiggerConfigInterface;
@@ -71,11 +72,15 @@ export class Digger implements DiggerInterface {
                 return {
                     uuid: p.uuid,
                     text: p.text,
-                    position: p.position,
                     rotation: p.text_rotation,
                     textColor: p.text_color,
                     primaryColor: p.primary_color,
-                    draggable: p.draggable
+                    draggable: p.draggable,
+                    position: this.calculator.imagePositionToCanvasPosition(
+                        p.position,
+                        STANDARD_WIDTH,
+                        this.getContainer().clientWidth
+                    )
                 }
             }));
         }
@@ -141,7 +146,14 @@ export class Digger implements DiggerInterface {
 
     setPoints(points: PointInterface[]): void {
         this.painter.removeAllPoints();
-        this.painter.drawPoints(points);
+        this.painter.drawPoints(points.map(p => ({
+            ...p,
+            position: this.calculator.imagePositionToCanvasPosition(
+                p.position,
+                STANDARD_WIDTH,
+                this.getContainer().clientWidth
+            )
+        })));
     }
 
     addPoint(point: PointInterface, offset: Vector2d): void {
@@ -160,12 +172,12 @@ export class Digger implements DiggerInterface {
         redraw && this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
 
-    private cbDragEnd(position: {x: number, y: number} | undefined): void {
+    private cbDragEnd(position: { x: number, y: number } | undefined): void {
         this.currentPosition = position || {x: 0, y: 0};
         this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
 
-    private cbScale(newScale: number, position: {x: number, y: number}): void {
+    private cbScale(newScale: number, position: { x: number, y: number }): void {
         this.currentPosition = position;
         const zl = this.zoomLevelMapper.get(this.scaleToLevelIndex(newScale));
         this.currentZoomLevel = zl ? zl : this.currentZoomLevel;

@@ -22,6 +22,7 @@ export interface PainterPointInterface {
     rotation?: number;
     primaryColor?: string;
     textColor?: string;
+    draggable?: boolean,
 }
 
 export interface TooltipConfig {
@@ -40,4 +41,6 @@ export interface PainterInterface {
     drawImages(images: PainterImageInterface[], levelUuid: string): void;
     drawPoints(points: PainterPointInterface[]): void;
     updatePoint(point: PainterPointInterface): void;
+    removePoint(uuid: string): void;
+    removeAllPoints(): void;
 }

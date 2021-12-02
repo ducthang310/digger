@@ -3,7 +3,7 @@ import { Calculator } from '../calculator/calculator';
 import { CalculatorInterface } from '../calculator/calculator.interface';
 import { PainterInterface } from '../painter/painter.interface';
 import { Painter } from '../painter/painter';
-import { Vector2d, ZoomLevelInterface } from '../data.interface';
+import { PointInterface, Vector2d, ZoomLevelInterface } from '../data.interface';
 
 export const DEFAULT_ZOOM_GAP = 1.5;
 
@@ -13,7 +13,7 @@ export class Digger implements DiggerInterface {
     painter: PainterInterface;
     zoomLevelMapper: Map<number, ZoomLevelInterface>;
 
-    currentZoomLevel: ZoomLevelInterface;
+    currentZoomLevel: ZoomLevelInterface | null;
     currentScaleValue: number;
     currentPosition: Vector2d;
 
@@ -74,7 +74,8 @@ export class Digger implements DiggerInterface {
                     position: p.position,
                     rotation: p.text_rotation,
                     textColor: p.text_color,
-                    primaryColor: p.primary_color
+                    primaryColor: p.primary_color,
+                    draggable: p.draggable
                 }
             }));
         }
@@ -82,7 +83,7 @@ export class Digger implements DiggerInterface {
 
     private render(zoomLevel: ZoomLevelInterface, scaleValue: number, position?: Vector2d): void {
         if (!zoomLevel) {
-            throw new Error('Zoom level is required');
+            return;
         }
 
         if (this.timeoutIDRendering) {
@@ -120,12 +121,51 @@ export class Digger implements DiggerInterface {
         this.painter.scale(this.currentScaleValue);
     }
 
-    cbDragEnd(position: {x: number, y: number} | undefined): void {
+    redraw(): void {
+        this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+    }
+
+    setZoomLevels(zoomLevels: ZoomLevelInterface[], redraw?: boolean): void {
+        this.config.zoomLevels = zoomLevels;
+        this.zoomLevelMapper = new Map<number, ZoomLevelInterface>();
+        this.config.zoomLevels.forEach(z => {
+            this.zoomLevelMapper.set(z.levelIndex, z);
+        });
+        let zl: ZoomLevelInterface;
+        if (this.currentZoomLevel) {
+            zl = this.config.zoomLevels.find(zl => zl.uuid === this.currentZoomLevel?.uuid);
+        }
+        this.currentZoomLevel = zl ? zl : (this.config.zoomLevels.length ? this.config.zoomLevels[0] : null);
+        redraw && this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+    }
+
+    setPoints(points: PointInterface[]): void {
+        this.painter.removeAllPoints();
+        this.painter.drawPoints(points);
+    }
+
+    addPoint(point: PointInterface, offset: Vector2d): void {
+        this.painter.drawPoints([{
+            ...point,
+            position: this.calculator.offsetToPosition(offset, this.currentPosition)
+        }]);
+    }
+
+    removePoint(uuid: string): void {
+        this.painter.removePoint(uuid);
+    }
+
+    updatePoint(point: PointInterface, redraw?: boolean): void {
+        this.painter.updatePoint(point);
+        redraw && this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+    }
+
+    private cbDragEnd(position: {x: number, y: number} | undefined): void {
         this.currentPosition = position || {x: 0, y: 0};
         this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
 
-    cbScale(newScale: number, position: {x: number, y: number}): void {
+    private cbScale(newScale: number, position: {x: number, y: number}): void {
         this.currentPosition = position;
         const zl = this.zoomLevelMapper.get(this.scaleToLevelIndex(newScale));
         this.currentZoomLevel = zl ? zl : this.currentZoomLevel;
@@ -144,8 +184,4 @@ export class Digger implements DiggerInterface {
     private scaleToLevelIndex(scale: number): number {
         return scale < 1 ? 0 : Math.floor(Math.log(scale) / Math.log(this.zoomGap));
     }
-
-    // private levelIndexToScale(index: number): number {
-    //     return index * this.zoomGap + 1;
-    // }
 }

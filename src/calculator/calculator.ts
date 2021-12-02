@@ -78,6 +78,10 @@ export class Calculator implements CalculatorInterface {
         return images;
     }
 
+    offsetToPosition(offset: Vector2d, currentPosition: Vector2d): Vector2d {
+        return {x: offset.x - currentPosition.x, y: offset.y - currentPosition.y};
+    }
+
     private generateSubImageUrl(imageUrl: string, key: string): string {
         const paths = imageUrl.split('.');
         paths[paths.length - 2] += '-' + key;

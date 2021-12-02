@@ -6,6 +6,8 @@ import {
 } from './painter.interface';
 import Konva from 'konva';
 
+const DefaultColor = '#FF7000';
+
 export class Painter implements PainterInterface {
     config: PainterConfigInterface;
     containerId: string;
@@ -159,12 +161,12 @@ export class Painter implements PainterInterface {
 
     drawPoints(points: PainterPointInterface[]): void {
         points.forEach(pointData => {
-            const primaryColor = pointData.primaryColor ?? '#0271FF';
+            const primaryColor = pointData.primaryColor ?? DefaultColor;
             const strokeColor = this.hex2rgba(primaryColor, 0.2);
             const point = new Konva.Group({
                 id: pointData.uuid,
                 name: 'Point',
-                draggable: true,
+                draggable: pointData.draggable,
                 rotation: pointData.rotation,
             });
             const circle = new Konva.Circle({
@@ -233,6 +235,18 @@ export class Painter implements PainterInterface {
         point.draw();
     }
 
+    removePoint(uuid: string): void {
+        const point = this.getPointByUuid(uuid);
+        if (point) {
+            point.destroy();
+        }
+    }
+
+    removeAllPoints(): void {
+        const points = this.stage.find('.Point');
+        points.forEach(p => p.destroy());
+    }
+
     private getLevelByUuid(uuid: string): Konva.Group | undefined {
         // return this.levelMapper.get(uuid);
         return this.stage.findOne(`#${uuid}`) as Konva.Group;
@@ -258,7 +272,7 @@ export class Painter implements PainterInterface {
     }
 
     private createToolTip(tooltipConfig: TooltipConfig): Konva.Group {
-        const primaryColor = tooltipConfig.primaryColor ?? '#0271FF';
+        const primaryColor = tooltipConfig.primaryColor ?? DefaultColor;
         const textColor = tooltipConfig.textColor ?? '#ffffff';
 
         const tooltip = new Konva.Label({

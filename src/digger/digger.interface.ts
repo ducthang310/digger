@@ -1,4 +1,4 @@
-import { EventCallbacksInterface, PointInterface, ZoomLevelInterface } from '../data.interface';
+import { EventCallbacksInterface, PointInterface, Vector2d, ZoomLevelInterface } from '../data.interface';
 
 export interface DiggerConfigInterface {
     containerId: string;
@@ -14,7 +14,12 @@ export interface DiggerInterface {
 
     zoomIn(): void;
     zoomOut(): void;
+    redraw(): void;
 
-    cbDragEnd(position: {x: number, y: number} | undefined): void;
-    cbScale(newScale: number, position: {x: number, y: number}): void;
+    setZoomLevels(zoomLevels: ZoomLevelInterface[], redraw?: boolean): void;
+
+    setPoints(points: PointInterface[], redraw?: boolean): void;
+    addPoint(point: PointInterface, offset: Vector2d): void;
+    updatePoint(point: PointInterface, redraw?: boolean): void;
+    removePoint(uuid: string, redraw?: boolean): void;
 }

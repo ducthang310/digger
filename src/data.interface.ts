@@ -41,7 +41,7 @@ export interface PointInterface {
     text_color?: string;
     title: string;
     description: string;
-    meta_data: {[key: string]: any};
     position: Vector2d;
+    draggable?: boolean,
     visible_in_zoom_levels: number[];
 }

@@ -12,4 +12,6 @@ export interface CalculatorInterface {
         standardWidth: number,
         boundary?: number
     ): PainterImageInterface[];
+
+    offsetToPosition(offset: Vector2d, currentPosition: Vector2d): Vector2d;
 }

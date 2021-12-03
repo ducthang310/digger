@@ -78,8 +78,11 @@ export class Calculator implements CalculatorInterface {
         return images;
     }
 
-    offsetToPosition(offset: Vector2d, currentPosition: Vector2d): Vector2d {
-        return {x: offset.x - currentPosition.x, y: offset.y - currentPosition.y};
+    offsetToPosition(offset: Vector2d, currentPosition: Vector2d, currentScaleValue: number): Vector2d {
+        return {
+            x: (offset.x - currentPosition.x) / currentScaleValue,
+            y: (offset.y - currentPosition.y) / currentScaleValue
+        };
     }
 
     imagePositionToCanvasPosition(imgPos: Vector2d, imageWidth: number, standardWidth: number): Vector2d {

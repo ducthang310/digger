@@ -200,6 +200,10 @@ export class Painter implements PainterInterface {
                 }, pointData.type));
             }
             point.setPosition(pointData.position);
+            point.setAttrs({
+                scaleX: 1 / this.stage.scaleX(),
+                scaleY: 1 / this.stage.scaleY()
+            });
             this.pointLayer.add(point);
             if (this.config.events && this.config.events.pointDragend) {
                 point.on('dragend', (evt) => {

@@ -136,10 +136,10 @@ export class Digger implements DiggerInterface {
     }
 
     addPoint(point: PointInterface, offset: Vector2d): void {
-        this.painter.drawPoints([this.convertToPainterPoint({
-            ...point,
-            position: this.calculator.offsetToPosition(offset, this.currentPosition)
-        })]);
+        this.painter.drawPoints([{
+            ...this.convertToPainterPoint(point),
+            position: this.calculator.offsetToPosition(offset, this.currentPosition, this.currentScaleValue)
+        }]);
     }
 
     removePoint(uuid: string): void {

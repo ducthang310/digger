@@ -21,4 +21,6 @@ export interface CalculatorInterface {
     offsetToPosition(offset: Vector2d, currentPosition: Vector2d, currentScaleValue: number): Vector2d;
 
     imagePositionToCanvasPosition(imgPos: Vector2d, imageWidth: number, standardWidth: number): Vector2d;
+
+    canvasPositionToImagePosition(imgPos: Vector2d, imageWidth: number, standardWidth: number): Vector2d;
 }

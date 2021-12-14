@@ -20,6 +20,8 @@ export class Digger implements DiggerInterface {
 
     timeoutIDRendering: any;
     zoomGap: number;
+    maxLevel: number;
+    minLevel: number;
 
 
     constructor(config: DiggerConfigInterface) {
@@ -50,7 +52,8 @@ export class Digger implements DiggerInterface {
             events: {
                 ...this.config.events,
                 dragend: this.cbDragEnd.bind(this),
-                scale: this.cbScale.bind(this)
+                scale: this.cbScale.bind(this),
+                pointDragend: this.cbPointDragEnd.bind(this),
             }
         });
 
@@ -60,6 +63,7 @@ export class Digger implements DiggerInterface {
         this.currentScaleValue = 1;
         this.currentPosition = {x: 0, y: 0};
         if (Array.isArray(this.config.zoomLevels) && this.config.zoomLevels.length) {
+            this.setMaxMinLevel();
             this.config.zoomLevels.forEach(z => {
                 this.zoomLevelMapper.set(z.levelIndex, z);
             });
@@ -116,12 +120,20 @@ export class Digger implements DiggerInterface {
         this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
 
+    setMaxMinLevel(): void {
+        console.log(this.config.zoomLevels);
+        const numbers = this.config.zoomLevels.map(zl => zl.levelIndex);
+        this.maxLevel = Math.max(...numbers);
+        this.minLevel = Math.min(...numbers);
+    }
+
     setZoomLevels(zoomLevels: ZoomLevelInterface[], redraw?: boolean): void {
         this.config.zoomLevels = zoomLevels;
         this.zoomLevelMapper = new Map<number, ZoomLevelInterface>();
         this.config.zoomLevels.forEach(z => {
             this.zoomLevelMapper.set(z.levelIndex, z);
         });
+        this.setMaxMinLevel();
         let zl: ZoomLevelInterface;
         if (this.currentZoomLevel) {
             zl = this.config.zoomLevels.find(zl => zl.id === this.currentZoomLevel?.id);
@@ -135,11 +147,19 @@ export class Digger implements DiggerInterface {
         this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
     }
 
-    addPoint(point: PointInterface, offset: Vector2d): void {
+    addPoint(point: PointInterface): void {
         this.painter.drawPoints([{
             ...this.convertToPainterPoint(point),
-            position: this.calculator.offsetToPosition(offset, this.currentPosition, this.currentScaleValue)
         }]);
+    }
+
+    convertOffsetToImagePosition(offset: Vector2d): Vector2d {
+        const canvasPos = this.calculator.offsetToPosition(offset, this.currentPosition, this.currentScaleValue);
+        return this.calculator.canvasPositionToImagePosition(
+            canvasPos,
+            STANDARD_WIDTH,
+            this.getContainer().clientWidth
+        );
     }
 
     removePoint(id: string): void {
@@ -158,14 +178,27 @@ export class Digger implements DiggerInterface {
 
     private cbScale(newScale: number, position: { x: number, y: number }): void {
         this.currentPosition = position;
-        const zl = this.zoomLevelMapper.get(this.scaleToLevelIndex(newScale));
-        this.currentZoomLevel = zl ? zl : (
-            this.config.zoomLevels && this.config.zoomLevels.length
-                ? this.config.zoomLevels[this.config.zoomLevels.length]
-                : null
-        );
+        const index = this.scaleToLevelIndex(newScale);
+        if (index <= this.minLevel) {
+            this.currentZoomLevel = this.zoomLevelMapper.get(this.minLevel);
+        } else if (index >= this.maxLevel) {
+            this.currentZoomLevel = this.zoomLevelMapper.get(this.maxLevel);
+        } else {
+            const zl = this.zoomLevelMapper.get(index);
+            this.currentZoomLevel = zl ? zl : this.currentZoomLevel;
+        }
         this.currentScaleValue = newScale;
         this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+    }
+
+    private cbPointDragEnd(id: string, position: { x: number, y: number }): void {
+        if (this.config.events && this.config.events.pointDragend) {
+            this.config.events.pointDragend(id, this.calculator.canvasPositionToImagePosition(
+                position,
+                STANDARD_WIDTH,
+                this.getContainer().clientWidth
+            ));
+        }
     }
 
     private getContainer(): HTMLElement {

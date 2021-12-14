@@ -97,6 +97,13 @@ export class Calculator implements CalculatorInterface {
         };
     }
 
+    offsetToPositionWithoutRatioScaling(offset: Vector2d, currentPosition: Vector2d): Vector2d {
+        return {
+            x: (offset.x - currentPosition.x),
+            y: (offset.y - currentPosition.y)
+        };
+    }
+
     imagePositionToCanvasPosition(imgPos: Vector2d, imageWidth: number, standardWidth: number): Vector2d {
         if (!imageWidth) {
             return {x: 0, y: 0};
@@ -105,6 +112,17 @@ export class Calculator implements CalculatorInterface {
         return {
             x: imgPos.x * ratio,
             y: imgPos.y * ratio
+        }
+    }
+
+    canvasPositionToImagePosition(canvasPos: Vector2d, imageWidth: number, standardWidth: number): Vector2d {
+        if (!imageWidth) {
+            return {x: 0, y: 0};
+        }
+        const ratio = standardWidth / imageWidth;
+        return {
+            x: canvasPos.x / ratio,
+            y: canvasPos.y / ratio
         }
     }
 

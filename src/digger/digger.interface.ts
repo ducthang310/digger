@@ -22,4 +22,5 @@ export interface DiggerInterface {
     addPoint(point: PointInterface, offset: Vector2d): void;
     updatePoint(point: PointInterface, redraw?: boolean): void;
     removePoint(id: string, redraw?: boolean): void;
+    convertOffsetToImagePosition(offset: Vector2d): Vector2d;
 }

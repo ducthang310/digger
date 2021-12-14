@@ -8,7 +8,7 @@ export interface PainterConfigInterface {
 }
 
 export interface PainterImageInterface {
-    uuid: string;
+    id: string;
     url: string;
     position: {x: number, y: number};
     width: number;
@@ -16,7 +16,7 @@ export interface PainterImageInterface {
 }
 
 export interface PainterPointInterface {
-    uuid: string;
+    id: string;
     text?: string;
     type?: number;
     position: {x: number, y: number};
@@ -39,9 +39,9 @@ export interface PainterInterface {
     reset(): void;
     scale(value: number): void;
 
-    drawImages(images: PainterImageInterface[], levelUuid: string): void;
+    drawImages(images: PainterImageInterface[], levelId: string): void;
     drawPoints(points: PainterPointInterface[]): void;
     updatePoint(point: PainterPointInterface): void;
-    removePoint(uuid: string): void;
+    removePoint(id: string): void;
     removeAllPoints(): void;
 }

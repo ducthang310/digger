@@ -3,11 +3,11 @@ export interface EventCallbacksInterface {
     dragMove?: () => void,
     dragend?: (position: {x: number, y: number} | undefined) => void,
     scale?: (newScale: number, position: {x: number, y: number}) => void,
-    pointClick?: (uuid: string) => void,
-    pointDragend?: (uuid: string, position: {x: number, y: number}) => void,
+    pointClick?: (id: string) => void,
+    pointDragend?: (id: string, position: {x: number, y: number}) => void,
 }
 export interface BaseImageInterface {
-    uuid: string;
+    id: string;
     name: string;
     url: string;
     width: number;
@@ -15,7 +15,7 @@ export interface BaseImageInterface {
 }
 
 export interface ZoomLevelInterface {
-    uuid: string;
+    id: string;
     name: string;
     levelIndex: number;
     image: BaseImageInterface;
@@ -33,7 +33,7 @@ export interface Vector2d {
 }
 
 export interface PointInterface {
-    uuid: string;
+    id: string;
     type: PointType;
     text?: string;
     text_rotation?: number;

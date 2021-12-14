@@ -133,12 +133,12 @@ export class Painter implements PainterInterface {
         tween.play();
     }
 
-    drawImages(images: PainterImageInterface[], levelUuid: string): void {
-        const level = this.getLevelByUuid(levelUuid) ?? this.createLevel(levelUuid);
+    drawImages(images: PainterImageInterface[], levelId: string): void {
+        const level = this.getLevelById(levelId) ?? this.createLevel(levelId);
         const children = this.imageLayer.children ?? [];
         level.zIndex(children.length - 1);
         images.forEach(image => {
-            const imageId = level.id() + '-' + image.uuid;
+            const imageId = level.id() + '-' + image.id;
             if (!this.imageExists(imageId)) {
                 const imageObj = new Image();
                 imageObj.onload = () => {
@@ -164,7 +164,7 @@ export class Painter implements PainterInterface {
             const primaryColor = pointData.primaryColor ?? DefaultColor;
             const strokeColor = this.hex2rgba(primaryColor, 0.2);
             const point = new Konva.Group({
-                id: pointData.uuid,
+                id: pointData.id,
                 name: 'Point',
                 draggable: pointData.draggable,
                 rotation: pointData.rotation,
@@ -175,7 +175,7 @@ export class Painter implements PainterInterface {
                 stroke: strokeColor,
                 strokeWidth: 12,
             });
-            circle.setAttr('point_uuid', pointData.uuid);
+            circle.setAttr('point_id', pointData.id);
             circle.on('mouseenter', () => {
                 this.stage.container().style.cursor = 'pointer';
             });
@@ -186,7 +186,7 @@ export class Painter implements PainterInterface {
 
             circle.on('click', () => {
                 if (this.config.events?.pointClick) {
-                    this.config.events.pointClick(pointData.uuid);
+                    this.config.events.pointClick(pointData.id);
                 }
             });
 
@@ -209,7 +209,7 @@ export class Painter implements PainterInterface {
             if (this.config.events && this.config.events.pointDragend) {
                 point.on('dragend', (evt) => {
                     if (this.config.events && this.config.events.pointDragend) {
-                        this.config.events.pointDragend(pointData.uuid, evt.currentTarget.getPosition());
+                        this.config.events.pointDragend(pointData.id, evt.currentTarget.getPosition());
                     }
                 });
             }
@@ -217,9 +217,9 @@ export class Painter implements PainterInterface {
     }
 
     updatePoint(pointData: PainterPointInterface): void {
-        const point = this.getPointByUuid(pointData.uuid);
+        const point = this.getPointById(pointData.id);
         if (!point) {
-            throw new Error(`The point does not exist (${pointData.uuid})`);
+            throw new Error(`The point does not exist (${pointData.id})`);
         }
         const konText: Konva.Text = point.findOne('Text');
         if (!pointData.text && konText) {
@@ -240,8 +240,8 @@ export class Painter implements PainterInterface {
         point.draw();
     }
 
-    removePoint(uuid: string): void {
-        const point = this.getPointByUuid(uuid);
+    removePoint(id: string): void {
+        const point = this.getPointById(id);
         if (point) {
             point.destroy();
         }
@@ -252,24 +252,24 @@ export class Painter implements PainterInterface {
         points.forEach(p => p.destroy());
     }
 
-    private getLevelByUuid(uuid: string): Konva.Group | undefined {
-        // return this.levelMapper.get(uuid);
-        return this.stage.findOne(`#${uuid}`) as Konva.Group;
+    private getLevelById(id: string): Konva.Group | undefined {
+        // return this.levelMapper.get(id);
+        return this.stage.findOne(`#${id}`) as Konva.Group;
     }
 
-    private createLevel(uuid: string): Konva.Group {
+    private createLevel(id: string): Konva.Group {
         const level = new Konva.Group({
-            id: uuid,
+            id: id,
             name: 'Level'
         });
         this.imageLayer.add(level);
-        // this.levelMapper.set(uuid, level);
+        // this.levelMapper.set(id, level);
         return level;
     }
 
-    private getPointByUuid(uuid: string): Konva.Group | undefined {
-        // return this.pointMapper.get(uuid);
-        return this.stage.findOne(`#${uuid}`) as Konva.Group;
+    private getPointById(id: string): Konva.Group | undefined {
+        // return this.pointMapper.get(id);
+        return this.stage.findOne(`#${id}`) as Konva.Group;
     }
 
     private imageExists(id: string): boolean {

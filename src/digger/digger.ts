@@ -94,7 +94,7 @@ export class Digger implements DiggerInterface {
                 scaleValue,
                 this.getContainer().clientWidth,
             );
-            this.painter.drawImages(images, zoomLevel.uuid);
+            this.painter.drawImages(images, zoomLevel.id);
         }, 300);
     }
 
@@ -124,7 +124,7 @@ export class Digger implements DiggerInterface {
         });
         let zl: ZoomLevelInterface;
         if (this.currentZoomLevel) {
-            zl = this.config.zoomLevels.find(zl => zl.uuid === this.currentZoomLevel?.uuid);
+            zl = this.config.zoomLevels.find(zl => zl.id === this.currentZoomLevel?.id);
         }
         this.currentZoomLevel = zl ? zl : (this.config.zoomLevels.length ? this.config.zoomLevels[0] : null);
         redraw && this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
@@ -142,8 +142,8 @@ export class Digger implements DiggerInterface {
         }]);
     }
 
-    removePoint(uuid: string): void {
-        this.painter.removePoint(uuid);
+    removePoint(id: string): void {
+        this.painter.removePoint(id);
     }
 
     updatePoint(point: PointInterface, redraw?: boolean): void {
@@ -159,7 +159,11 @@ export class Digger implements DiggerInterface {
     private cbScale(newScale: number, position: { x: number, y: number }): void {
         this.currentPosition = position;
         const zl = this.zoomLevelMapper.get(this.scaleToLevelIndex(newScale));
-        this.currentZoomLevel = zl ? zl : this.currentZoomLevel;
+        this.currentZoomLevel = zl ? zl : (
+            this.config.zoomLevels && this.config.zoomLevels.length
+                ? this.config.zoomLevels[this.config.zoomLevels.length]
+                : null
+        );
         this.currentScaleValue = newScale;
         this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
@@ -178,7 +182,7 @@ export class Digger implements DiggerInterface {
 
     private convertToPainterPoint(data: PointInterface): PainterPointInterface {
         return {
-            uuid: data.uuid,
+            id: data.id,
             type: data.type,
             text: data.text,
             rotation: data.text_rotation,

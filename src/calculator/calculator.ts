@@ -17,6 +17,18 @@ export class Calculator implements CalculatorInterface {
         baseImageSize: number = BASE_IMAGE_SIZE,
         boundary: number = DEFAULT_BOUNDARY_RATIO
     ): PainterImageInterface[] {
+        if (baseImage.width === null || baseImage.height === null) {
+            return [{
+                id: baseImage.id + '-1x1',
+                url: baseImage.url,
+                position: {
+                    x: 0,
+                    y: 0,
+                },
+                width: containerWidth,
+                height: null
+            }]
+        }
         const standardHeight = baseImage.height * standardWidth / baseImage.width;
         const realWidth = standardWidth * scaleValue;
         const realHeight = standardHeight * scaleValue;
@@ -64,7 +76,7 @@ export class Calculator implements CalculatorInterface {
                 const x = (i - 1) * standardImageSize;
                 const y = (j - 1) * standardImageSize;
                 images.push({
-                    uuid: key,
+                    id: key,
                     url: this.generateSubImageUrl(baseImage.url, key),
                     position: {
                         x,

@@ -21,5 +21,5 @@ export interface DiggerInterface {
     setPoints(points: PointInterface[], redraw?: boolean): void;
     addPoint(point: PointInterface, offset: Vector2d): void;
     updatePoint(point: PointInterface, redraw?: boolean): void;
-    removePoint(uuid: string, redraw?: boolean): void;
+    removePoint(id: string, redraw?: boolean): void;
 }

@@ -41,7 +41,8 @@ export interface PainterInterface {
 
     drawImages(images: PainterImageInterface[], levelId: string): void;
     drawPoints(points: PainterPointInterface[]): void;
-    updatePoint(point: PainterPointInterface): void;
+    redrawPoint(point: PainterPointInterface): void;
+    changePointProperties(point: PainterPointInterface): void;
     removePoint(id: string): void;
     removeAllPoints(): void;
 }

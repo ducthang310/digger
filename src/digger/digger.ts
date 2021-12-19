@@ -166,8 +166,13 @@ export class Digger implements DiggerInterface {
         this.painter.removePoint(id);
     }
 
-    updatePoint(point: PointInterface, redraw?: boolean): void {
-        this.painter.updatePoint(point);
+    redrawPoint(point: PointInterface, redraw?: boolean): void {
+        this.painter.redrawPoint(this.convertToPainterPoint(point));
+        redraw && this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+    }
+
+    changePointProperties(point: PointInterface, redraw?: boolean): void {
+        this.painter.redrawPoint(this.convertToPainterPoint(point));
         redraw && this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
 

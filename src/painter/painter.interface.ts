@@ -18,6 +18,8 @@ export interface PainterImageInterface {
 export interface PainterPointInterface {
     id: string;
     text?: string;
+    title?: string;
+    description?: string;
     type?: number;
     position: {x: number, y: number};
     rotation?: number;
@@ -29,7 +31,16 @@ export interface PainterPointInterface {
 export interface TooltipConfig {
     primaryColor?: string;
     textColor?: string;
-    text: string;
+    text?: string;
+    title?: string;
+    description?: string;
+}
+
+export enum PointType {
+    TEXT,
+    LINK,
+    BEST_PRACTICE,
+    RISK,
 }
 
 export interface PainterInterface {

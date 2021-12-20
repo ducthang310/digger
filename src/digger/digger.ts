@@ -223,6 +223,8 @@ export class Digger implements DiggerInterface {
             id: data.id,
             type: data.type,
             text: data.text,
+            title: data.title,
+            description: data.description,
             rotation: data.text_rotation,
             textColor: data.text_color,
             primaryColor: data.primary_color,

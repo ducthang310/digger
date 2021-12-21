@@ -5,6 +5,8 @@ export interface EventCallbacksInterface {
     scale?: (newScale: number, position: {x: number, y: number}) => void,
     pointClick?: (id: string) => void,
     pointDragend?: (id: string, position: {x: number, y: number}) => void,
+    pointMouseenter?: (id: string, position: {x: number, y: number}) => void,
+    pointMouseleave?: (id: string, position: {x: number, y: number}) => void,
 }
 export interface BaseImageInterface {
     id: string;
@@ -43,5 +45,6 @@ export interface PointInterface {
     description: string;
     position: Vector2d;
     draggable?: boolean,
-    visible_in_zoom_levels: number[];
+    visible_in_zoom_levels?: number[];
+    tooltip_position?: string;
 }

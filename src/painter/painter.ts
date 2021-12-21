@@ -15,6 +15,8 @@ export class Painter implements PainterInterface {
     config: PainterConfigInterface;
     containerId: string;
 
+    servicesMap = new Map<number, PointService>();
+
     stage: Konva.Stage;
     imageLayer: Konva.Layer;
     // levelMapper: Map<string, Konva.Group>;
@@ -164,7 +166,6 @@ export class Painter implements PainterInterface {
 
     drawPoints(points: PainterPointInterface[]): void {
         points.forEach(pointData => {
-            console.log(pointData);
             const service = this.getService(pointData.type);
             const point = service.createShapes(pointData, this.stage);
             point.on('click', () => {
@@ -173,12 +174,38 @@ export class Painter implements PainterInterface {
                 }
             });
 
-            point.on('mouseenter', () => {
-                this.stage.container().style.cursor = 'pointer';
-            });
-            point.on('mouseleave', () => {
-                this.stage.container().style.cursor = 'default';
-            });
+            if (pointData.type === PointType.RISK) {
+                point.find('.PointCircle').forEach(c => {
+                    c.on('mouseenter', () => {
+                        this.stage.container().style.cursor = 'pointer';
+                        if (this.config.events && this.config.events.pointMouseenter) {
+                            this.config.events.pointMouseenter(pointData.id, point.getPosition());
+                        }
+                        point.find('.Tooltip').forEach(t => {
+                            t.hide();
+                        });
+                        point.clearCache();
+                    });
+                    c.on('mouseleave', () => {
+                        this.stage.container().style.cursor = 'default';
+                        if (this.config.events && this.config.events.pointMouseleave) {
+                            this.config.events.pointMouseleave(pointData.id, point.getPosition());
+                        }
+
+                        point.find('.Tooltip').forEach(t => {
+                            t.show();
+                        });
+                        point.clearCache();
+                    });
+                });
+            } else {
+                point.on('mouseenter', () => {
+                    this.stage.container().style.cursor = 'pointer';
+                });
+                point.on('mouseleave', () => {
+                    this.stage.container().style.cursor = 'default';
+                });
+            }
 
             point.setPosition(pointData.position);
             point.setAttrs({
@@ -204,6 +231,7 @@ export class Painter implements PainterInterface {
         }
         this.drawPoints([pointData]);
         this.pointLayer.draw();
+        console.log('--redraw');
     }
 
     changePointProperties(pointData: PainterPointInterface): void {
@@ -211,30 +239,8 @@ export class Painter implements PainterInterface {
         if (!point) {
             throw new Error(`The point does not exist (${pointData.id})`);
         }
-        console.log(pointData);
-        point.position(pointData.position);
-        if (pointData.rotation) {
-            point.rotation(pointData.rotation);
-        }
-        if (pointData.type === 0) {
-            const konText: Konva.Text = point.findOne('Text');
-            if (!pointData.text && konText) {
-                konText.destroy();
-            } else if (pointData.text) {
-                if (!konText) {
-                    const newKonText = new Konva.Text({
-                        text: pointData.text,
-                        fontSize: 14,
-                        fill: pointData.textColor,
-                        fontStyle: '400'
-                    });
-                    point.add(newKonText);
-                } else {
-                    konText.fill(pointData.textColor);
-                    konText.text(pointData.text);
-                }
-            }
-        }
+        const service = this.getService(pointData.type);
+        service.changePointProperties(pointData, point);
     }
 
     removePoint(id: string): void {
@@ -276,6 +282,9 @@ export class Painter implements PainterInterface {
 
     private getService(type: PointType): PointService {
         let service: PointService;
+        if (this.servicesMap.has(type)) {
+            return this.servicesMap.get(type);
+        }
         switch (type) {
             case PointType.TEXT:
                 service = new TextService();
@@ -292,6 +301,7 @@ export class Painter implements PainterInterface {
             default:
                 throw new Error('Point type is invalid');
         }
+        this.servicesMap.set(type, service);
         return service;
     }
 }

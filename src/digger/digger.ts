@@ -54,6 +54,8 @@ export class Digger implements DiggerInterface {
                 dragend: this.cbDragEnd.bind(this),
                 scale: this.cbScale.bind(this),
                 pointDragend: this.cbPointDragEnd.bind(this),
+                pointMouseenter: this.cbPointMouseenter.bind(this),
+                pointMouseleave: this.cbPointMouseleave.bind(this),
             }
         });
 
@@ -172,7 +174,7 @@ export class Digger implements DiggerInterface {
     }
 
     changePointProperties(point: PointInterface, redraw?: boolean): void {
-        this.painter.redrawPoint(this.convertToPainterPoint(point));
+        this.painter.changePointProperties(this.convertToPainterPoint(point));
         redraw && this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
 
@@ -206,6 +208,22 @@ export class Digger implements DiggerInterface {
         }
     }
 
+    private cbPointMouseenter(id: string, position: { x: number, y: number }): void {
+        if (this.config.events && this.config.events.pointMouseenter) {
+            this.config.events.pointMouseenter(id, this.calculator.canvasPositionToOffset(
+                position, this.currentPosition, this.currentScaleValue
+            ));
+        }
+    }
+
+    private cbPointMouseleave(id: string, position: { x: number, y: number }): void {
+        if (this.config.events && this.config.events.pointMouseleave) {
+            this.config.events.pointMouseleave(id, this.calculator.canvasPositionToOffset(
+                position, this.currentPosition, this.currentScaleValue
+            ));
+        }
+    }
+
     private getContainer(): HTMLElement {
         const container = document.getElementById(this.config.containerId);
         if (!container) {
@@ -233,7 +251,8 @@ export class Digger implements DiggerInterface {
                 data.position,
                 STANDARD_WIDTH,
                 this.getContainer().clientWidth
-            )
+            ),
+            tooltipPosition: data.tooltip_position
         }
     }
 }

@@ -26,6 +26,7 @@ export interface PainterPointInterface {
     primaryColor?: string;
     textColor?: string;
     draggable?: boolean,
+    tooltipPosition?: string;
 }
 
 export interface TooltipConfig {

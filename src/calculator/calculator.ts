@@ -97,6 +97,13 @@ export class Calculator implements CalculatorInterface {
         };
     }
 
+    canvasPositionToOffset(canvasPosition: Vector2d, currentPosition: Vector2d, currentScaleValue: number): Vector2d {
+        return {
+            x: canvasPosition.x * currentScaleValue + currentPosition.x,
+            y: canvasPosition.y * currentScaleValue + currentPosition.y,
+        };
+    }
+
     offsetToPositionWithoutRatioScaling(offset: Vector2d, currentPosition: Vector2d): Vector2d {
         return {
             x: (offset.x - currentPosition.x),

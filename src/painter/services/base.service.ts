@@ -1,0 +1,70 @@
+import Konva from 'konva';
+import { DefaultColor } from '../painter.constants';
+import { PainterUtility } from '../painter.utility';
+import { PainterPointInterface } from '../painter.interface';
+import { Context } from 'konva/lib/Context';
+
+export abstract class PointService {
+    abstract createShapes(data: PainterPointInterface, stage?: Konva.Stage): Konva.Group;
+    abstract changePointProperties(data: PainterPointInterface, point: Konva.Group): void;
+
+    createHotspot(data: PainterPointInterface): Konva.Circle {
+        const primaryColor = data.primaryColor ?? DefaultColor;
+        const strokeColor = PainterUtility.hex2rgba(primaryColor, 0.2);
+        const circle = new Konva.Circle({
+            radius: 10,
+            fill: primaryColor,
+            stroke: strokeColor,
+            strokeWidth: 12,
+            name: 'PointCircle'
+        });
+        circle.setAttr('point_id', data.id);
+        return circle;
+    }
+
+    createWrapper(
+        ctx: Context, x: number, y: number, width: number, height: number, radiusArr: number[],
+        triangleWidth: number, triangleHeight: number, position?: string
+    ): void {
+        const radius = {tl: radiusArr[0], tr: radiusArr[1], br: radiusArr[2], bl: radiusArr[3]};
+        ctx.beginPath();
+        ctx.moveTo(x + radius.tl, y);
+
+        if (triangleWidth && triangleHeight && position === 'bottom') {
+            ctx.lineTo((x + width - triangleWidth) / 2, y);
+            ctx.lineTo((x + width ) / 2, y - triangleHeight);
+            ctx.lineTo((x + width + triangleWidth) / 2, y);
+        }
+
+        ctx.lineTo(x + width - radius.tr, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+
+        if (triangleWidth && triangleHeight && position === 'left') {
+            ctx.lineTo(x + width, (y + height - triangleHeight) / 2);
+            ctx.lineTo(x + width + triangleHeight, (y + height) / 2);
+            ctx.lineTo(x + width, (y + height + triangleHeight) / 2);
+        }
+
+        ctx.lineTo(x + width, y + height - radius.br);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+
+        if (triangleWidth && triangleHeight && position === 'top') {
+            ctx.lineTo((x + width + triangleWidth) / 2, y + height);
+            ctx.lineTo((x + width ) / 2, y + height + triangleHeight);
+            ctx.lineTo((x + width - triangleWidth) / 2, y + height);
+        }
+
+        ctx.lineTo(x + radius.bl, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+
+        if (triangleWidth && triangleHeight && position === 'right') {
+            ctx.lineTo(x, (y + height + triangleHeight) / 2);
+            ctx.lineTo(x - triangleHeight, (y + height) / 2);
+            ctx.lineTo(x, (y + height - triangleHeight) / 2);
+        }
+
+        ctx.lineTo(x, y + radius.tl);
+        ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+        ctx.closePath();
+    }
+}

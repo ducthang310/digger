@@ -244,6 +244,8 @@ export class Digger implements DiggerInterface {
             title: data.title,
             description: data.description,
             rotation: data.text_rotation,
+            skewX: data.text_skew_x,
+            skewY: data.text_skew_y,
             textColor: data.text_color,
             primaryColor: data.primary_color,
             draggable: data.draggable,
@@ -252,7 +254,8 @@ export class Digger implements DiggerInterface {
                 STANDARD_WIDTH,
                 this.getContainer().clientWidth
             ),
-            tooltipPosition: data.tooltip_position
+            tooltipPosition: data.tooltip_position,
+            pin_to_edge: data.pin_to_edge,
         }
     }
 }

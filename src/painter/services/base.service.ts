@@ -26,6 +26,7 @@ export abstract class PointService {
         ctx: Context, x: number, y: number, width: number, height: number, radiusArr: number[],
         triangleWidth: number, triangleHeight: number, position?: string
     ): void {
+        position = position ?? 'top';
         const radius = {tl: radiusArr[0], tr: radiusArr[1], br: radiusArr[2], bl: radiusArr[3]};
         ctx.beginPath();
         ctx.moveTo(x + radius.tl, y);

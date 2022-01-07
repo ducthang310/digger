@@ -23,10 +23,13 @@ export interface PainterPointInterface {
     type?: number;
     position: {x: number, y: number};
     rotation?: number;
+    skewX?: number;
+    skewY?: number;
     primaryColor?: string;
     textColor?: string;
     draggable?: boolean,
     tooltipPosition?: string;
+    pin_to_edge?: string;
 }
 
 export interface TooltipConfig {

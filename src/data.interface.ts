@@ -39,6 +39,8 @@ export interface PointInterface {
     type: PointType;
     text?: string;
     text_rotation?: number;
+    text_skew_x?: number;
+    text_skew_y?: number;
     primary_color?: string;
     text_color?: string;
     title: string;
@@ -47,4 +49,5 @@ export interface PointInterface {
     draggable?: boolean,
     visible_in_zoom_levels?: number[];
     tooltip_position?: string;
+    pin_to_edge?: string;
 }

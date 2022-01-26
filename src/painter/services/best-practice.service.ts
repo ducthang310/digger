@@ -18,13 +18,14 @@ export class BestPracticeService extends PointService {
                 text: data.text,
                 primaryColor: primaryColor,
                 textColor: data.textColor
-            }));
+            }, data.tooltipPosition));
         }
 
         return point;
     }
 
-    private createToolTip(tooltipConfig: TooltipConfig): Konva.Group {
+    private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition?: string): Konva.Group {
+        tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
         const primaryColor = tooltipConfig.primaryColor ?? DefaultColor;
         const textColor = tooltipConfig.textColor ?? '#ffffff';
         const paddingLeft = 10;
@@ -59,7 +60,7 @@ export class BestPracticeService extends PointService {
         rectWidth = contentWidth + 18;
         const rectWrapper = new Konva.Shape({
             sceneFunc: (context, shape) => {
-                this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], triangleWidth, triangleHeight)
+                this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], triangleWidth, triangleHeight, tooltipPosition);
                 context.fillStrokeShape(shape);
             },
             x: 0,
@@ -70,23 +71,30 @@ export class BestPracticeService extends PointService {
             shadowOffset: { x: 0, y: 2 },
             shadowOpacity: 0.5,
             strokeWidth: 1,
-            stroke: primaryColor
+            stroke: primaryColor,
+            name: 'RectWrapper'
         });
         rectWrapper.width(rectWidth);
+        rectWrapper.height(rectHeight);
 
         toolTip.add(rectWrapper);
         icon && toolTip.add(icon);
         toolTip.add(simpleText);
-        toolTip.setPosition({
-            x: -1 * rectWidth / 2,
-            y: -1 * (rectHeight + 26)
-        });
+        toolTip.setPosition(this.getTooltipPosition(rectWrapper, tooltipPosition));
 
         return toolTip;
     }
 
     changePointProperties(pointData: PainterPointInterface, point: Konva.Group): void {
         point.position(pointData.position);
+        const toolTip: Konva.Group = point.findOne('.Tooltip');
+        let wrapper: Konva.Rect;
+        if (toolTip) {
+            wrapper = toolTip.findOne('.RectWrapper');
+        }
+        if (wrapper) {
+            toolTip.setPosition(this.getTooltipPosition(wrapper, pointData.tooltipPosition));
+        }
     }
 
     private iconBestPractice(): Konva.Group {

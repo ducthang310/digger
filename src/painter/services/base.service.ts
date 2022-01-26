@@ -68,4 +68,29 @@ export abstract class PointService {
         ctx.quadraticCurveTo(x, y, x + radius.tl, y);
         ctx.closePath();
     }
+
+    getTooltipPosition(wrapper: Konva.Shape, tooltipPosition: string): {x: number, y: number} {
+        const pos = {x: 0, y: 0};
+        const gap = 26;
+        const height = 40;
+        const width = wrapper.width();
+        switch (tooltipPosition) {
+            case 'right':
+                pos.x = gap;
+                pos.y = -1 * height / 2;
+                break;
+            case 'bottom':
+                pos.x = -1 * width / 2;
+                pos.y = gap;
+                break;
+            case 'left':
+                pos.x = -1 * (width + gap)
+                pos.y = -1 * height / 2;
+                break;
+            default:
+                pos.x = -1 * width / 2;
+                pos.y = -1 * (height + gap);
+        }
+        return pos;
+    }
 }

@@ -12,7 +12,6 @@ export class RiskService extends PointService {
             draggable: data.draggable,
         });
         point.add(this.createHotspot(data));
-console.log('----', data.tooltipPosition);
         point.add(this.createToolTip({
             title: data.title,
             description: data.description,
@@ -102,10 +101,6 @@ console.log('----', data.tooltipPosition);
         toolTip.add(headRect);
         toolTip.add(simpleText);
         descriptionText && toolTip.add(descriptionText);
-        toolTip.setPosition({
-            x: -1 * rectWidth / 2,
-            y: -1 * (rectHeight + 26)
-        });
         toolTip.setPosition(this.getTooltipPosition(rectWrapper, tooltipPosition));
 
         return toolTip;
@@ -121,31 +116,6 @@ console.log('----', data.tooltipPosition);
         if (wrapper) {
             toolTip.setPosition(this.getTooltipPosition(wrapper, pointData.tooltipPosition));
         }
-    }
-
-    getTooltipPosition(wrapper: Konva.Shape, tooltipPosition: string): {x: number, y: number} {
-        const pos = {x: 0, y: 0};
-        const gap = 26;
-        const height = 40;
-        const width = wrapper.width();
-        switch (tooltipPosition) {
-            case 'right':
-                pos.x = gap;
-                pos.y = -1 * height / 2;
-                break;
-            case 'bottom':
-                pos.x = -1 * width / 2;
-                pos.y = gap;
-                break;
-            case 'left':
-                pos.x = -1 * (width + gap)
-                pos.y = -1 * height / 2;
-                break;
-            default:
-                pos.x = -1 * width / 2;
-                pos.y = -1 * (height + gap);
-        }
-        return pos;
     }
 
     //

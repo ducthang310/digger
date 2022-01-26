@@ -123,7 +123,6 @@ export class Digger implements DiggerInterface {
     }
 
     setMaxMinLevel(): void {
-        console.log(this.config.zoomLevels);
         const numbers = this.config.zoomLevels.map(zl => zl.levelIndex);
         this.maxLevel = Math.max(...numbers);
         this.minLevel = Math.min(...numbers);

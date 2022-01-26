@@ -174,7 +174,7 @@ export class Painter implements PainterInterface {
                 }
             });
 
-            if (pointData.type === PointType.RISK) {
+            if (pointData.type === PointType.BEST_PRACTICE || pointData.type === PointType.RISK) {
                 point.find('.PointCircle').forEach(c => {
                     c.on('mouseenter', () => {
                         this.stage.container().style.cursor = 'pointer';
@@ -206,6 +206,16 @@ export class Painter implements PainterInterface {
                     this.stage.container().style.cursor = 'default';
                 });
             }
+
+            point.find('.Tooltip').forEach(t => {
+                t.on('click', (evt) => {
+                    console.log('---digger: clicked to tooltip', this.config.events);
+                    if (this.config.events?.tooltipClick) {
+                        evt.cancelBubble = true;
+                        this.config.events.tooltipClick(pointData.id);
+                    }
+                });
+            });
 
             point.setPosition(pointData.position);
             point.setAttrs({

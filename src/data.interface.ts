@@ -4,6 +4,7 @@ export interface EventCallbacksInterface {
     dragend?: (position: {x: number, y: number} | undefined) => void,
     scale?: (newScale: number, position: {x: number, y: number}) => void,
     pointClick?: (id: string) => void,
+    tooltipClick?: (id: string) => void,
     pointDragend?: (id: string, position: {x: number, y: number}) => void,
     pointMouseenter?: (id: string, position: {x: number, y: number}) => void,
     pointMouseleave?: (id: string, position: {x: number, y: number}) => void,

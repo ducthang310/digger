@@ -88,7 +88,7 @@ export class Digger implements DiggerInterface {
             this.timeoutIDRendering = null;
         }
 
-        this.timeoutIDRendering = setTimeout(() => {
+        this.timeoutIDRendering = setTimeout(async () => {
             if (!position) {
                 position = {x: 0, y: 0};
             }

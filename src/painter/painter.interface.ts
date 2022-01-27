@@ -55,6 +55,7 @@ export interface PainterInterface {
     scale(value: number): void;
 
     drawImages(images: PainterImageInterface[], levelId: string): void;
+    hideImages(imageIds: string[], levelId: string): void;
     drawPoints(points: PainterPointInterface[]): void;
     redrawPoint(point: PainterPointInterface): void;
     changePointProperties(point: PainterPointInterface): void;

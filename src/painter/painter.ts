@@ -2,7 +2,8 @@ import {
     PainterConfigInterface,
     PainterImageInterface,
     PainterInterface,
-    PainterPointInterface, PointType
+    PainterPointInterface,
+    PointType
 } from './painter.interface';
 import Konva from 'konva';
 import { TextService } from './services/text.service';
@@ -22,6 +23,7 @@ export class Painter implements PainterInterface {
     // levelMapper: Map<string, Konva.Group>;
     pointLayer: Konva.Layer;
     // pointMapper: Map<string, Konva.Group>;
+    visibleImageIds: string[];
 
     constructor(config: PainterConfigInterface) {
         if (!config || !config.containerId) {
@@ -142,26 +144,62 @@ export class Painter implements PainterInterface {
         const level = this.getLevelById(levelId) ?? this.createLevel(levelId);
         const children = this.imageLayer.children ?? [];
         level.zIndex(children.length - 1);
-        images.forEach(image => {
-            const imageId = level.id() + '-' + image.id;
-            if (!this.imageExists(imageId)) {
-                const imageObj = new Image();
-                imageObj.onload = () => {
-                    const konImage = new Konva.Image({
-                        id: imageId,
-                        x: image.position.x,
-                        y: image.position.y,
-                        width: image.width,
-                        height: image.height,
-                        image: imageObj,
-                        listening: false,
-                    });
+        const visibleImageIds: string[] = [];
+        for (const image of images) {
+            const imageId = this.generateImageId(image.id, levelId);
+            visibleImageIds.push(imageId);
+            const konImg = this.getImageById(imageId)
+            if (!konImg) {
+                const promise = this.createImage(image, imageId);
+                promise.then((konImage) => {
                     level && level.add(konImage);
-                    konImage.cache();
-                };
-                imageObj.src = image.url;
+                    // konImage.cache();
+                    level.draw();
+                })
+            } else {
+                konImg.visible(true);
+            }
+        }
+        this.hideImages(visibleImageIds);
+    }
+
+    private async createImage(image: PainterImageInterface, id: string): Promise<Konva.Image> {
+        return new Promise((resolve, reject) => {
+            const imageObj = new Image();
+            imageObj.onload = () => {
+                const konImage = new Konva.Image({
+                    id: id,
+                    x: image.position.x,
+                    y: image.position.y,
+                    width: image.width,
+                    height: image.height,
+                    image: imageObj,
+                    listening: false,
+                    name: 'SubImage',
+                });
+                resolve(konImage);
+            };
+            imageObj.onerror = () => reject();
+            imageObj.src = image.url;
+        });
+    }
+
+    private generateImageId(imageId: string, levelId: string): string {
+        return levelId + '-' + imageId;
+    }
+
+    hideImages(newImageIds: string[]): void {
+        if (!this.visibleImageIds || !this.visibleImageIds.length) {
+            this.visibleImageIds = newImageIds;
+            return;
+        }
+        this.visibleImageIds.forEach(id => {
+            if (newImageIds.indexOf(id) < 0) {
+                const img = this.stage.findOne(`#${id}`);
+                img && img.visible(false);
             }
         });
+        this.visibleImageIds = newImageIds;
     }
 
     drawPoints(points: PainterPointInterface[]): void {
@@ -209,7 +247,6 @@ export class Painter implements PainterInterface {
 
             point.find('.Tooltip').forEach(t => {
                 t.on('click', (evt) => {
-                    console.log('---digger: clicked to tooltip', this.config.events);
                     if (this.config.events?.tooltipClick) {
                         evt.cancelBubble = true;
                         this.config.events.tooltipClick(pointData.id);
@@ -285,8 +322,8 @@ export class Painter implements PainterInterface {
         return this.stage.findOne(`#${id}`) as Konva.Group;
     }
 
-    private imageExists(id: string): boolean {
-        return !!this.stage.findOne(`#${id}`);
+    private getImageById(id: string): Konva.Image {
+        return this.stage.findOne(`#${id}`);
     }
 
 

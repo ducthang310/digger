@@ -145,12 +145,14 @@ export class Painter implements PainterInterface {
         const children = this.imageLayer.children ?? [];
         level.zIndex(children.length - 1);
         const visibleImageIds: string[] = [];
+        const promises = [];
         for (const image of images) {
             const imageId = this.generateImageId(image.id, levelId);
             visibleImageIds.push(imageId);
             const konImg = this.getImageById(imageId)
             if (!konImg) {
                 const promise = this.createImage(image, imageId);
+                promises.push(promise);
                 promise.then((konImage) => {
                     level && level.add(konImage);
                     // konImage.cache();
@@ -160,7 +162,18 @@ export class Painter implements PainterInterface {
                 konImg.visible(true);
             }
         }
-        this.hideImages(visibleImageIds);
+        Promise.all(promises)
+            .then(() => {
+                // ignore
+            })
+            .catch(() => {
+                // ignore
+            })
+            .finally(() => {
+                this.hideImages(visibleImageIds);
+            })
+        ;
+
     }
 
     private async createImage(image: PainterImageInterface, id: string): Promise<Konva.Image> {

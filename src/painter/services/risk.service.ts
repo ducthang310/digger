@@ -45,7 +45,7 @@ export class RiskService extends PointService {
             fontSize: 14,
             fontFamily: 'Poppins',
             fill: textColor,
-            fontStyle: '600',
+            fontStyle: '400',
         });
         let descriptionText: Konva.Text;
         if (tooltipConfig.description) {

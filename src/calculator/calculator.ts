@@ -1,5 +1,5 @@
 import { CalculatorInterface } from './calculator.interface';
-import { BaseImageInterface, Vector2d } from '../data.interface';
+import { BaseImageInterface, PointInterface, Vector2d } from '../data.interface';
 import { PainterImageInterface } from '../painter/painter.interface';
 
 export const BASE_IMAGE_SIZE = 256;
@@ -137,5 +137,39 @@ export class Calculator implements CalculatorInterface {
         const paths = imageUrl.split('.');
         paths[paths.length - 2] += '-' + key;
         return paths.join('.');
+    }
+
+    getVisiblePoints(points: PointInterface[], scaleValue: number): PointInterface[] {
+        const visiblePoints: PointInterface[] = [];
+        const numbers: number[] = [];
+        const mapper: Map<number, PointInterface[]> = new Map<number, PointInterface[]>();
+        points.forEach(p => {
+            const minZoom = p.min_zoom ? p.min_zoom : 0;
+            if (numbers.indexOf(minZoom) < 0) {
+                numbers.push(minZoom);
+            }
+
+            const arrPoints = mapper.has(minZoom) ? mapper.get(minZoom) : [];
+            arrPoints.push(p);
+            mapper.set(minZoom, arrPoints);
+        });
+
+        for (let i = 0, len = numbers.length; i < len; i++) {
+            const num = numbers[i];
+            if (scaleValue < num) {
+                continue;
+            }
+            const arrPoints = mapper.has(num) ? mapper.get(num) : [];
+            arrPoints.forEach(p => {
+                const minZoom = num;
+                const maxZoom = p.max_zoom ? p.max_zoom : 999;
+                if (minZoom <= scaleValue && scaleValue <= maxZoom) {
+                    visiblePoints.push(p);
+                }
+            })
+        }
+        // console.log(scaleValue, numbers);
+        // console.log(points, visiblePoints);
+        return visiblePoints;
     }
 }

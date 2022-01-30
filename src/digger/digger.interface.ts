@@ -6,6 +6,7 @@ export interface DiggerConfigInterface {
     points: PointInterface[];
     zoomGap?: number;
     events?: EventCallbacksInterface;
+    scaleBy?: number;
 }
 
 export interface DiggerInterface {
@@ -24,4 +25,7 @@ export interface DiggerInterface {
     changePointProperties(point: PointInterface, redraw?: boolean): void;
     removePoint(id: string, redraw?: boolean): void;
     convertOffsetToImagePosition(offset: Vector2d): Vector2d;
+
+    updateScaleBy(val: number): void;
+    updateZoomGap(val: number): void;
 }

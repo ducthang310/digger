@@ -58,7 +58,6 @@ export class Painter implements PainterInterface {
     }
 
     initEvents(): void {
-        const scaleBy = 1.026;
         this.stage.on('wheel', (e) => {
             e.evt.preventDefault();
             const oldScale = this.stage.scaleX();
@@ -68,7 +67,7 @@ export class Painter implements PainterInterface {
                 y: (pointer.y - this.stage.y()) / oldScale,
             };
             const newScale =
-                e.evt.deltaY < 0 ? oldScale * scaleBy : oldScale / scaleBy;
+                e.evt.deltaY < 0 ? oldScale * this.config.scaleBy : oldScale / this.config.scaleBy;
 
             this.stage.scale({x: newScale, y: newScale});
 
@@ -209,13 +208,15 @@ export class Painter implements PainterInterface {
         this.visibleImageIds.forEach(id => {
             if (newImageIds.indexOf(id) < 0) {
                 const img = this.stage.findOne(`#${id}`);
-                img && img.visible(false);
+                // img && img.visible(false);
+                img && img.destroy();
             }
         });
         this.visibleImageIds = newImageIds;
     }
 
     drawPoints(points: PainterPointInterface[]): void {
+        this.removeAllPoints();
         points.forEach(pointData => {
             const service = this.getService(pointData.type);
             const point = service.createShapes(pointData, this.stage);
@@ -291,7 +292,6 @@ export class Painter implements PainterInterface {
         }
         this.drawPoints([pointData]);
         this.pointLayer.draw();
-        console.log('--redraw');
     }
 
     changePointProperties(pointData: PainterPointInterface): void {

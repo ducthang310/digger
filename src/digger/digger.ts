@@ -7,12 +7,14 @@ import { PointInterface, Vector2d, ZoomLevelInterface } from '../data.interface'
 
 export const DEFAULT_ZOOM_GAP = 1.5;
 export const STANDARD_WIDTH = 1024;
+export const DEFAULT_SCALE_BY = 1.026;
 
 export class Digger implements DiggerInterface {
     config: DiggerConfigInterface;
     calculator: CalculatorInterface;
     painter: PainterInterface;
     zoomLevelMapper: Map<number, ZoomLevelInterface>;
+    points: PointInterface[] = [];
 
     currentZoomLevel: ZoomLevelInterface | null;
     currentScaleValue: number;
@@ -56,7 +58,8 @@ export class Digger implements DiggerInterface {
                 pointDragend: this.cbPointDragEnd.bind(this),
                 pointMouseenter: this.cbPointMouseenter.bind(this),
                 pointMouseleave: this.cbPointMouseleave.bind(this),
-            }
+            },
+            scaleBy: this.config.scaleBy ? this.config.scaleBy : DEFAULT_SCALE_BY,
         });
 
         this.zoomGap = this.config.zoomGap || DEFAULT_ZOOM_GAP;
@@ -101,6 +104,12 @@ export class Digger implements DiggerInterface {
                 this.getContainer().clientWidth,
             );
             this.painter.drawImages(images, zoomLevel.id);
+
+            const points = this.calculator.getVisiblePoints(
+                this.points,
+                scaleValue,
+            );
+            this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
         }, 300);
     }
 
@@ -108,13 +117,28 @@ export class Digger implements DiggerInterface {
         //
     }
 
+    updateScaleBy(val: number): void {
+        this.config.scaleBy = val;
+        this.painter.config.scaleBy = val;
+        this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+    }
+
+    updateZoomGap(val: number): void {
+        this.config.zoomGap = val;
+        this.zoomGap = val;
+        this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+    }
+
     zoomIn(): void {
-        this.currentScaleValue += 1;
+        const val = Math.round((this.currentScaleValue + Number.EPSILON) * 100) / 100;
+        this.currentScaleValue = val + 0.1;
         this.painter.scale(this.currentScaleValue);
     }
 
     zoomOut(): void {
-        this.currentScaleValue = this.currentScaleValue <= 2 ? 1 : (this.currentScaleValue - 1);
+        const val = Math.round((this.currentScaleValue + Number.EPSILON) * 100) / 100;
+        const newVal = val - 0.1;
+        this.currentScaleValue = newVal <= 1 ? 1 : newVal;
         this.painter.scale(this.currentScaleValue);
     }
 
@@ -144,14 +168,20 @@ export class Digger implements DiggerInterface {
     }
 
     setPoints(points: PointInterface[]): void {
-        this.painter.removeAllPoints();
-        this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
+        // this.painter.removeAllPoints();
+        // this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
+        // console.log('---setPoints');
+        this.points = points;
+        this.drawPoints();
     }
 
     addPoint(point: PointInterface): void {
-        this.painter.drawPoints([{
-            ...this.convertToPainterPoint(point),
-        }]);
+        // this.painter.drawPoints([{
+        //     ...this.convertToPainterPoint(point),
+        // }]);
+        // console.log('---addPoint');
+        this.points.push(point);
+        this.drawPoints();
     }
 
     convertOffsetToImagePosition(offset: Vector2d): Vector2d {
@@ -164,12 +194,25 @@ export class Digger implements DiggerInterface {
     }
 
     removePoint(id: string): void {
+        // console.log('---removePoint');
+        this.points = this.points.filter(p => p.id !== id);
         this.painter.removePoint(id);
     }
 
     redrawPoint(point: PointInterface, redraw?: boolean): void {
+        this.points = this.points.filter(p => p.id !== point.id);
+        this.points.push(point);
+        // console.log('---redrawPoint');
         this.painter.redrawPoint(this.convertToPainterPoint(point));
         redraw && this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+    }
+
+    private drawPoints(): void {
+        const points = this.calculator.getVisiblePoints(
+            this.points,
+            this.currentScaleValue,
+        );
+        this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
     }
 
     changePointProperties(point: PointInterface, redraw?: boolean): void {
@@ -195,6 +238,9 @@ export class Digger implements DiggerInterface {
         }
         this.currentScaleValue = newScale;
         this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+        if (this.config.events && this.config.events.cbScale) {
+            this.config.events.cbScale(this.currentScaleValue, this.currentZoomLevel.levelIndex);
+        }
     }
 
     private cbPointDragEnd(id: string, position: { x: number, y: number }): void {
@@ -232,7 +278,7 @@ export class Digger implements DiggerInterface {
     }
 
     private scaleToLevelIndex(scale: number): number {
-        return scale < 1 ? 0 : Math.floor(Math.log(scale) / Math.log(this.zoomGap));
+        return (scale < 1 ? 0 : Math.floor(Math.log(scale) / Math.log(this.zoomGap))) + 1;
     }
 
     private convertToPainterPoint(data: PointInterface): PainterPointInterface {

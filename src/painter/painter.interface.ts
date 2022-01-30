@@ -5,6 +5,7 @@ export interface PainterConfigInterface {
     width: number;
     height: number;
     events?: EventCallbacksInterface;
+    scaleBy: number;
 }
 
 export interface PainterImageInterface {
@@ -48,6 +49,7 @@ export enum PointType {
 }
 
 export interface PainterInterface {
+    config: PainterConfigInterface;
 
     init(config: PainterConfigInterface): void;
 

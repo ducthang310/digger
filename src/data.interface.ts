@@ -3,6 +3,7 @@ export interface EventCallbacksInterface {
     dragMove?: () => void,
     dragend?: (position: {x: number, y: number} | undefined) => void,
     scale?: (newScale: number, position: {x: number, y: number}) => void,
+    cbScale?: (newScale: number, levelIndex: number) => void,
     pointClick?: (id: string) => void,
     tooltipClick?: (id: string) => void,
     pointDragend?: (id: string, position: {x: number, y: number}) => void,
@@ -51,4 +52,6 @@ export interface PointInterface {
     visible_in_zoom_levels?: number[];
     tooltip_position?: string;
     pin_to_edge?: string;
+    min_zoom?: number;
+    max_zoom?: number;
 }

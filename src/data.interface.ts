@@ -40,11 +40,14 @@ export interface PointInterface {
     id: string;
     type: PointType;
     text?: string;
+    text_canvas?: HTMLCanvasElement;
+    text_width?: number;
     text_rotation?: number;
     text_skew_x?: number;
     text_skew_y?: number;
     primary_color?: string;
     text_color?: string;
+    text_background_color?: string;
     title: string;
     description: string;
     position: Vector2d;

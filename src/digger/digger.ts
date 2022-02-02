@@ -81,7 +81,7 @@ export class Digger implements DiggerInterface {
         }
     }
 
-    private render(zoomLevel: ZoomLevelInterface, scaleValue: number, position?: Vector2d): void {
+    private render(zoomLevel: ZoomLevelInterface, scaleValue: number, position?: Vector2d, redrawPoints = false): void {
         if (!zoomLevel) {
             return;
         }
@@ -109,7 +109,7 @@ export class Digger implements DiggerInterface {
                 this.points,
                 scaleValue,
             );
-            this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
+            redrawPoints && this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
         }, 300);
     }
 
@@ -237,7 +237,7 @@ export class Digger implements DiggerInterface {
             this.currentZoomLevel = zl ? zl : this.currentZoomLevel;
         }
         this.currentScaleValue = newScale;
-        this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+        this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition, true);
         if (this.config.events && this.config.events.cbScale) {
             this.config.events.cbScale(this.currentScaleValue, this.currentZoomLevel.levelIndex);
         }
@@ -286,12 +286,15 @@ export class Digger implements DiggerInterface {
             id: data.id,
             type: data.type,
             text: data.text,
+            text_canvas: data.text_canvas,
+            textWidth: data.text_width,
             title: data.title,
             description: data.description,
             rotation: data.text_rotation,
             skewX: data.text_skew_x,
             skewY: data.text_skew_y,
             textColor: data.text_color,
+            textBackgroundColor: data.text_background_color,
             primaryColor: data.primary_color,
             draggable: data.draggable,
             position: this.calculator.imagePositionToCanvasPosition(

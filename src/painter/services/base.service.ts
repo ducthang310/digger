@@ -5,7 +5,7 @@ import { PainterPointInterface } from '../painter.interface';
 import { Context } from 'konva/lib/Context';
 
 export abstract class PointService {
-    abstract createShapes(data: PainterPointInterface, stage?: Konva.Stage): Konva.Group;
+    abstract createShapes(data: PainterPointInterface, stage?: Konva.Stage): Promise<Konva.Group>;
     abstract changePointProperties(data: PainterPointInterface, point: Konva.Group): void;
 
     createHotspot(data: PainterPointInterface): Konva.Circle {

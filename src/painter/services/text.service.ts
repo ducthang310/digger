@@ -4,34 +4,47 @@ import { PointService } from './base.service';
 import { Vector2d } from '../../data.interface';
 
 export class TextService extends PointService {
-    createShapes(data: PainterPointInterface): Konva.Group {
+    async createShapes(data: PainterPointInterface): Promise<Konva.Group> {
         const point = new Konva.Group({
             id: data.id,
             name: 'Point',
             draggable: data.draggable,
             rotation: data.rotation,
         });
-        const padding = 7;
+        const padding = 0;
         const rect = new Konva.Rect({
             x: 0,
             y: 0,
             width: 100,
             height: 50,
-            fill: '#EF4B41',
+            fill: data.textBackgroundColor,
         });
-        const simpleText = new Konva.Text({
-            x: padding,
-            y: padding,
-            text: data.text,
-            fontSize: 14,
-            fill: data.textColor,
-            fontStyle: '400',
-            fontFamily: 'Poppins',
-            lineHeight: 1.25,
+        // const simpleText = new Konva.Text({
+        //     x: padding,
+        //     y: padding,
+        //     text: data.text,
+        //     fontSize: 14,
+        //     fill: data.textColor,
+        //     fontStyle: '400',
+        //     fontFamily: 'Poppins',
+        //     lineHeight: 1.25,
+        // });
+
+        const textScale = 1 / window.devicePixelRatio;
+        const simpleText = new Konva.Image({
+            x: 0,
+            y: 0,
+            scaleX: textScale,
+            scaleY: textScale,
+            image: data.text_canvas,
         });
-        const rectWidth = simpleText.width() + padding * 2;
+        // const textScale = 1;
+        const textWidth = simpleText.width() * textScale;
+        const textHeight = simpleText.height() * textScale;
+
+        const rectWidth = textWidth + padding * 2;
         rect.width(rectWidth);
-        const rectHeight = simpleText.height() + padding * 2;
+        const rectHeight = textHeight + padding * 2;
         rect.height(rectHeight);
         point.add(rect);
         point.add(simpleText);
@@ -66,6 +79,11 @@ export class TextService extends PointService {
             } else {
                 konText.fill(pointData.textColor);
                 konText.text(pointData.text);
+            }
+
+            const konRect: Konva.Rect = point.findOne('Rect');
+            if (konRect) {
+                konRect.fill(pointData.textBackgroundColor);
             }
         }
     }

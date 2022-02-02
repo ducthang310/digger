@@ -4,7 +4,7 @@ import { DefaultColor } from '../painter.constants';
 import { PointService } from './base.service';
 
 export class BestPracticeService extends PointService {
-    createShapes(data: PainterPointInterface): Konva.Group {
+    async createShapes(data: PainterPointInterface): Promise<Konva.Group> {
         const primaryColor = data.primaryColor ?? DefaultColor;
         const point = new Konva.Group({
             id: data.id,

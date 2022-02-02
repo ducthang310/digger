@@ -217,9 +217,9 @@ export class Painter implements PainterInterface {
 
     drawPoints(points: PainterPointInterface[]): void {
         this.removeAllPoints();
-        points.forEach(pointData => {
+        points.forEach(async pointData => {
             const service = this.getService(pointData.type);
-            const point = service.createShapes(pointData, this.stage);
+            const point = await service.createShapes(pointData, this.stage);
             point.on('click', () => {
                 if (this.config.events?.pointClick) {
                     this.config.events.pointClick(pointData.id);

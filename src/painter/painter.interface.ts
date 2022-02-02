@@ -19,6 +19,8 @@ export interface PainterImageInterface {
 export interface PainterPointInterface {
     id: string;
     text?: string;
+    text_canvas?: HTMLCanvasElement;
+    textWidth?: number;
     title?: string;
     description?: string;
     type?: number;
@@ -28,6 +30,7 @@ export interface PainterPointInterface {
     skewY?: number;
     primaryColor?: string;
     textColor?: string;
+    textBackgroundColor?: string;
     draggable?: boolean,
     tooltipPosition?: string;
     pin_to_edge?: string;

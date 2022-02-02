@@ -226,7 +226,7 @@ export class Painter implements PainterInterface {
                 }
             });
 
-            if (pointData.type === PointType.BEST_PRACTICE || pointData.type === PointType.RISK) {
+            if (pointData.type === PointType.BEST_PRACTICE || pointData.type === PointType.RISK || pointData.type === PointType.LINK) {
                 point.find('.PointCircle').forEach(c => {
                     c.on('mouseenter', () => {
                         this.stage.container().style.cursor = 'pointer';

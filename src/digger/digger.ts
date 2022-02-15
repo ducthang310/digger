@@ -108,6 +108,7 @@ export class Digger implements DiggerInterface {
             const points = this.calculator.getVisiblePoints(
                 this.points,
                 scaleValue,
+                this.zoomGap,
             );
             redrawPoints && this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
         }, 300);
@@ -211,6 +212,7 @@ export class Digger implements DiggerInterface {
         const points = this.calculator.getVisiblePoints(
             this.points,
             this.currentScaleValue,
+            this.zoomGap,
         );
         this.painter.drawPoints(points.map(p => this.convertToPainterPoint(p)));
     }

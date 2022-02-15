@@ -1,6 +1,7 @@
 import { CalculatorInterface } from './calculator.interface';
 import { BaseImageInterface, PointInterface, Vector2d } from '../data.interface';
 import { PainterImageInterface } from '../painter/painter.interface';
+import { DiggerUtility } from '../digger.utility';
 
 export const BASE_IMAGE_SIZE = 256;
 export const DEFAULT_BOUNDARY_RATIO = 1.5;
@@ -141,12 +142,12 @@ export class Calculator implements CalculatorInterface {
         return paths.join('.');
     }
 
-    getVisiblePoints(points: PointInterface[], scaleValue: number): PointInterface[] {
+    getVisiblePoints(points: PointInterface[], scaleValue: number, zoomGap: number): PointInterface[] {
         const visiblePoints: PointInterface[] = [];
         const numbers: number[] = [];
         const mapper: Map<number, PointInterface[]> = new Map<number, PointInterface[]>();
         points.forEach(p => {
-            const minZoom = p.min_zoom ? p.min_zoom : 0;
+            const minZoom = DiggerUtility.calculateScaleValue(zoomGap, (p.min_zoom ? p.min_zoom : 0));
             if (numbers.indexOf(minZoom) < 0) {
                 numbers.push(minZoom);
             }
@@ -164,7 +165,7 @@ export class Calculator implements CalculatorInterface {
             const arrPoints = mapper.has(num) ? mapper.get(num) : [];
             arrPoints.forEach(p => {
                 const minZoom = num;
-                const maxZoom = p.max_zoom ? p.max_zoom : 999;
+                const maxZoom = DiggerUtility.calculateScaleValue(zoomGap, (p.max_zoom ? p.max_zoom : 999));
                 if (minZoom <= scaleValue && scaleValue <= maxZoom) {
                     visiblePoints.push(p);
                 }

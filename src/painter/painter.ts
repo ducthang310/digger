@@ -226,7 +226,31 @@ export class Painter implements PainterInterface {
                 }
             });
 
-            if (pointData.type === PointType.BEST_PRACTICE || pointData.type === PointType.RISK || pointData.type === PointType.LINK) {
+            if (pointData.type === PointType.BEST_PRACTICE || pointData.type === PointType.RISK) {
+                // point.find('.PointCircle').forEach(c => {
+                    point.on('mouseenter', () => {
+                        this.stage.container().style.cursor = 'pointer';
+                        if (this.config.events && this.config.events.pointMouseenter) {
+                            this.config.events.pointMouseenter(pointData.id, point.getPosition());
+                        }
+                        // point.find('.Tooltip').forEach(t => {
+                        //     t.hide();
+                        // });
+                        // point.clearCache();
+                    });
+                    point.on('mouseleave', () => {
+                        this.stage.container().style.cursor = 'default';
+                        if (this.config.events && this.config.events.pointMouseleave) {
+                            this.config.events.pointMouseleave(pointData.id, point.getPosition());
+                        }
+
+                        // point.find('.Tooltip').forEach(t => {
+                        //     t.show();
+                        // });
+                        // point.clearCache();
+                    });
+                // });
+            } else if (pointData.type === PointType.LINK) {
                 point.find('.PointCircle').forEach(c => {
                     c.on('mouseenter', () => {
                         this.stage.container().style.cursor = 'pointer';

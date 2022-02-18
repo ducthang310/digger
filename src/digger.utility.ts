@@ -11,6 +11,6 @@ export class DiggerUtility {
 
     static calculateScaleValue(zoomGap: number, levelIndex: number): number {
         levelIndex = !levelIndex || levelIndex === 1 ? 0 : (levelIndex - 1);
-        return Math.round((Math.pow(zoomGap, levelIndex) + Number.EPSILON) * 100) / 100;
+        return levelIndex ? Math.round((Math.pow(zoomGap, levelIndex) + Number.EPSILON) * 100) / 100 : 0;
     }
 }

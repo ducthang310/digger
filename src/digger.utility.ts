@@ -13,4 +13,14 @@ export class DiggerUtility {
         levelIndex = !levelIndex || levelIndex === 1 ? 0 : (levelIndex - 1);
         return levelIndex ? Math.round((Math.pow(zoomGap, levelIndex) + Number.EPSILON) * 100) / 100 : 0;
     }
+
+    static isHTML(str: string): boolean {
+        return !(str || '')
+            // replace html tag with content
+            .replace(/<([^>]+?)([^>]*?)>(.*?)<\/\1>/ig, '')
+            // remove remaining self closing tags
+            .replace(/(<([^>]+)>)/ig, '')
+            // remove extra space at start and end
+            .trim();
+    }
 }

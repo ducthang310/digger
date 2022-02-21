@@ -288,7 +288,7 @@ export class Digger implements DiggerInterface {
             id: data.id,
             type: data.type,
             text: data.text,
-            text_canvas: data.text_canvas,
+            text_base64: data.text_base64,
             textWidth: data.text_width,
             title: data.title,
             description: data.description,

@@ -19,7 +19,7 @@ export interface PainterImageInterface {
 export interface PainterPointInterface {
     id: string;
     text?: string;
-    text_canvas?: HTMLCanvasElement;
+    text_base64?: string;
     textWidth?: number;
     title?: string;
     description?: string;

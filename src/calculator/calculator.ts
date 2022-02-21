@@ -138,6 +138,11 @@ export class Calculator implements CalculatorInterface {
 
     private generateSubImageUrl(imageUrl: string, key: string): string {
         const paths = imageUrl.split('.');
+        const ext = paths[paths.length - 1];
+        const validExts = ['jpg', 'png'];
+        if (validExts.indexOf(ext) < 0) {
+            return imageUrl + '-' + key;
+        }
         paths[paths.length - 2] += '-' + key;
         return paths.join('.');
     }

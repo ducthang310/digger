@@ -22,6 +22,28 @@ export abstract class PointService {
         return circle;
     }
 
+    createIcon(data: PainterPointInterface, base64: string): Promise<Konva.Image> {
+        return new Promise((resolve, reject) => {
+            const imageObj = new Image();
+            imageObj.onload = () => {
+                const icon = new Konva.Image({
+                    x: 0,
+                    y: 0,
+                    image: imageObj,
+                    name: 'PointCircle',
+                });
+                icon.setPosition({
+                    x: -1 * icon.width() / 2,
+                    y: -1 * icon.height() / 2,
+                })
+                icon.setAttr('point_id', data.id);
+                resolve(icon);
+            };
+            imageObj.onerror = () => reject();
+            imageObj.src = base64;
+        });
+    }
+
     createWrapper(
         ctx: Context, x: number, y: number, width: number, height: number, radiusArr: number[],
         triangleWidth: number, triangleHeight: number, position?: string

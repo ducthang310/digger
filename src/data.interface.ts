@@ -1,3 +1,5 @@
+import { PointSubtype } from './painter/painter.constants';
+
 export interface EventCallbacksInterface {
     dragstart?: () => void,
     dragMove?: () => void,
@@ -39,6 +41,7 @@ export interface Vector2d {
 export interface PointInterface {
     id: string;
     type: PointType;
+    subtype: PointSubtype;
     text?: string;
     text_base64?: string;
     text_width?: number;

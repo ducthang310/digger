@@ -287,6 +287,7 @@ export class Digger implements DiggerInterface {
         return {
             id: data.id,
             type: data.type,
+            subtype: data.subtype,
             text: data.text,
             text_base64: data.text_base64,
             textWidth: data.text_width,

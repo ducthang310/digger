@@ -24,6 +24,7 @@ export interface PainterPointInterface {
     title?: string;
     description?: string;
     type?: number;
+    subtype: string;
     position: {x: number, y: number};
     rotation?: number;
     skewX?: number;

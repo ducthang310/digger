@@ -11,7 +11,6 @@ export class RiskService extends PointService {
             name: 'Point',
             draggable: data.draggable,
         });
-        console.log(data.subtype);
 
         const importantItem = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTAwcHgiIGhlaWdodD0iMTAwcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPHRpdGxlPnN0YW5kYXJkPC90aXRsZT4KICAgIDxkZWZzPgogICAgICAgIDxmaWx0ZXIgeD0iLTM0LjQlIiB5PSItMzQuNCUiIHdpZHRoPSIxNjguOCUiIGhlaWdodD0iMTY4LjglIiBmaWx0ZXJVbml0cz0ib2JqZWN0Qm91bmRpbmdCb3giIGlkPSJmaWx0ZXItMSI+CiAgICAgICAgICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjYiIGluPSJTb3VyY2VHcmFwaGljIj48L2ZlR2F1c3NpYW5CbHVyPgogICAgICAgIDwvZmlsdGVyPgogICAgPC9kZWZzPgogICAgPGcgaWQ9IkhJLUZJLVVJIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8ZyBpZD0iVXBkYXRlcyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI1MC4wMDAwMDAsIC02MDUuMDAwMDAwKSI+CiAgICAgICAgICAgIDxnIGlkPSJzdGFuZGFyZCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjUwLjAwMDAwMCwgNjA1LjAwMDAwMCkiPgogICAgICAgICAgICAgICAgPGNpcmNsZSBpZD0id3JhcCIgZmlsbC1vcGFjaXR5PSIwLjIyMTYxODIyNiIgZmlsbD0iI0ZEQjAzMCIgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIj48L2NpcmNsZT4KICAgICAgICAgICAgICAgIDxjaXJjbGUgaWQ9InNlY29uZCIgZmlsbC1vcGFjaXR5PSIwLjU5NzgyMDE0OSIgZmlsbD0iI0ZDQjAzMCIgZmlsdGVyPSJ1cmwoI2ZpbHRlci0xKSIgY3g9IjUwLjE2Mjc5MDciIGN5PSI1MC4xNjI3OTA3IiByPSIyNi4xNjI3OTA3Ij48L2NpcmNsZT4KICAgICAgICAgICAgICAgIDxjaXJjbGUgaWQ9ImNlbnRlciIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9IiNGREIwMzAiIGN4PSI1MCIgY3k9IjUwIiByPSIxNSI+PC9jaXJjbGU+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==';
         const criticalItem = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTAwcHgiIGhlaWdodD0iMTAwcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPHRpdGxlPlB1bHNlIENvcHkgNTwvdGl0bGU+CiAgICA8ZGVmcz4KICAgICAgICA8ZmlsdGVyIHg9Ii0zNC40JSIgeT0iLTM0LjQlIiB3aWR0aD0iMTY4LjglIiBoZWlnaHQ9IjE2OC44JSIgZmlsdGVyVW5pdHM9Im9iamVjdEJvdW5kaW5nQm94IiBpZD0iZmlsdGVyLTEiPgogICAgICAgICAgICA8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI2IiBpbj0iU291cmNlR3JhcGhpYyI+PC9mZUdhdXNzaWFuQmx1cj4KICAgICAgICA8L2ZpbHRlcj4KICAgIDwvZGVmcz4KICAgIDxnIGlkPSJISS1GSS1VSSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgaWQ9IlVwZGF0ZXMiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC05NzkuMDAwMDAwLCAtNzUxLjAwMDAwMCkiPgogICAgICAgICAgICA8ZyBpZD0iR3JvdXAtMTEtQ29weS01IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg5NTYuMDAwMDAwLCA3MTkuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICA8ZyBpZD0iUHVsc2UtQ29weS01IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMy4wMDAwMDAsIDMyLjAwMDAwMCkiPgogICAgICAgICAgICAgICAgICAgIDxjaXJjbGUgaWQ9Ik92YWwtQ29weSIgZmlsbD0iI0Q5MkUyNCIgb3BhY2l0eT0iMC4xMyIgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIj48L2NpcmNsZT4KICAgICAgICAgICAgICAgICAgICA8Y2lyY2xlIGlkPSJPdmFsLUNvcHktMiIgZmlsbD0iI0Q5MkUyNCIgb3BhY2l0eT0iMC41MDQ1NTEiIGZpbHRlcj0idXJsKCNmaWx0ZXItMSkiIGN4PSI1MC4xNjI3OTA3IiBjeT0iNTAuMTYyNzkwNyIgcj0iMjYuMTYyNzkwNyI+PC9jaXJjbGU+CiAgICAgICAgICAgICAgICAgICAgPGcgaWQ9ImNlbnRlciIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzQuMDAwMDAwLCAzNC4wMDAwMDApIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGNpcmNsZSBpZD0iT3ZhbCIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9IiNEOTJFMjQiIGN4PSIxNiIgY3k9IjE2IiByPSIxNSI+PC9jaXJjbGU+CiAgICAgICAgICAgICAgICAgICAgICAgIDxnIGlkPSJHcm91cCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTYuMDAwMDAwLCAxNS42NjY2NjcpIHJvdGF0ZSgtMTgwLjAwMDAwMCkgdHJhbnNsYXRlKC0xNi4wMDAwMDAsIC0xNS42NjY2NjcpIHRyYW5zbGF0ZSgxNC4wMDAwMDAsIDYuMDAwMDAwKSI+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8ZWxsaXBzZSBpZD0iT3ZhbCIgZmlsbD0iI0ZGRkZGRiIgY3g9IjIiIGN5PSIyLjAzNTcxNDI5IiByeD0iMiIgcnk9IjIuMDM1NzE0MjkiPjwvZWxsaXBzZT4KICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxsaW5lIHgxPSIyIiB5MT0iNy43OTc2MTkwNSIgeDI9IjIiIHkyPSIxOS4zMzMzMzMzIiBpZD0iUGF0aC01MiIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PC9saW5lPgogICAgICAgICAgICAgICAgICAgICAgICA8L2c+CiAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICA8L2c+CiAgICAgICAgPC9nPgogICAgPC9nPgo8L3N2Zz4=';
@@ -28,14 +27,14 @@ export class RiskService extends PointService {
 
     private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition?: string): Konva.Group {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
-        const primaryColor = tooltipConfig.primaryColor ?? DefaultColor;
+        // const primaryColor = tooltipConfig.primaryColor ?? DefaultColor;
         const textColor = tooltipConfig.textColor ?? '#ffffff';
         const paddingLeft = 15;
-        const paddingTop = 17;
+        const paddingTop = 14;
         let rectWidth = 160;
         let rectHeight = 40;
-        const triangleWidth = 14;
-        const triangleHeight = 7;
+        const triangleWidth = 9;
+        const triangleHeight = 20;
 
         const toolTip = new Konva.Group({
             name: 'Tooltip',
@@ -65,23 +64,23 @@ export class RiskService extends PointService {
             });
         }
 
-        const headRect = new Konva.Shape({
-            sceneFunc: (context, shape) => {
-                this.createWrapper(context, 0, 0, rectWidth, 8, [8, 8, 0, 0], 0, 0)
-                context.fillStrokeShape(shape);
-            },
-            x: 0,
-            y: 0,
-            width: 140,
-            height: 8,
-            fill: primaryColor,
-        });
+        // const headRect = new Konva.Shape({
+        //     sceneFunc: (context, shape) => {
+        //         this.createWrapper(context, 0, 0, rectWidth, 8, [8, 8, 0, 0], 0, 0)
+        //         context.fillStrokeShape(shape);
+        //     },
+        //     x: 0,
+        //     y: 0,
+        //     width: 140,
+        //     height: 8,
+        //     fill: primaryColor,
+        // });
         const titleWidth = simpleText.width();
         const descriptionWidth = descriptionText ? descriptionText.width() : 0;
         const descriptionHeight = descriptionText ? descriptionText.height() : 0;
         const contentWidth = titleWidth < descriptionWidth ? descriptionWidth : titleWidth;
         rectWidth = contentWidth + paddingLeft * 2;
-        headRect.width(rectWidth);
+        // headRect.width(rectWidth);
         rectHeight = descriptionHeight ? (paddingTop + simpleText.height() + descriptionHeight + 17) : 40;
 
         const rectWrapper = new Konva.Shape({
@@ -92,21 +91,23 @@ export class RiskService extends PointService {
             x: 0,
             y: 0,
             fill: '#fff',
-            shadowColor: '#BBBBBB',
-            shadowBlur: 14,
-            shadowOffset: { x: 0, y: 2 },
+            shadowColor: '#000000',
+            shadowBlur: 9,
+            shadowOffset: { x: 0, y: 3 },
             shadowOpacity: 0.5,
-            strokeWidth: 1,
-            stroke: primaryColor,
+            // strokeWidth: 1,
+            // stroke: primaryColor,
             name: 'RectWrapper'
         });
         rectWrapper.width(rectWidth + 2);
         rectWrapper.height(45);
         toolTip.add(rectWrapper);
-        toolTip.add(headRect);
+        // toolTip.add(headRect);
         toolTip.add(simpleText);
         descriptionText && toolTip.add(descriptionText);
-        toolTip.setPosition(this.getTooltipPosition(rectWrapper, tooltipPosition));
+        const pos = this.getTooltipPosition(rectWrapper, tooltipPosition);
+        pos.x++;
+        toolTip.setPosition(pos);
 
         return toolTip;
     }

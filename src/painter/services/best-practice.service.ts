@@ -27,14 +27,14 @@ export class BestPracticeService extends PointService {
 
     private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition?: string): Konva.Group {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
-        const primaryColor = tooltipConfig.primaryColor ?? DefaultColor;
-        const textColor = tooltipConfig.textColor ?? '#ffffff';
-        const paddingLeft = 10;
+        const primaryColor = '#ffffff';
+        const textColor = tooltipConfig.primaryColor ?? '#ffffff';
+        const paddingLeft = 15;
         const paddingTop = 14;
         let rectWidth = 160;
         const rectHeight = 40;
-        const triangleWidth = 14;
-        const triangleHeight = 7;
+        const triangleWidth = 9;
+        const triangleHeight = 20;
 
         const toolTip = new Konva.Group({
             name: 'Tooltip',
@@ -52,13 +52,13 @@ export class BestPracticeService extends PointService {
             fontFamily: 'Poppins',
         });
 
-        let contentWidth = simpleText.width();
-        const icon: Konva.Group = this.iconBestPractice();
-        icon.setPosition({x: 9, y: 8});
-        const iconWidth = 35;
-        contentWidth += iconWidth;
-        simpleText.x(8 + iconWidth);
-        rectWidth = contentWidth + 18;
+        const contentWidth = simpleText.width();
+        // const icon: Konva.Group = this.iconBestPractice();
+        // icon.setPosition({x: 9, y: 8});
+        // const iconWidth = 35;
+        // contentWidth += iconWidth;
+        // simpleText.x(8 + iconWidth);
+        rectWidth = contentWidth + paddingLeft * 2;
         const rectWrapper = new Konva.Shape({
             sceneFunc: (context, shape) => {
                 this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], triangleWidth, triangleHeight, tooltipPosition);
@@ -67,19 +67,19 @@ export class BestPracticeService extends PointService {
             x: 0,
             y: 0,
             fill: primaryColor,
-            shadowColor: '#BBBBBB',
-            shadowBlur: 14,
-            shadowOffset: { x: 0, y: 2 },
+            shadowColor: '#000000',
+            shadowBlur: 9,
+            shadowOffset: { x: 0, y: 3 },
             shadowOpacity: 0.5,
-            strokeWidth: 1,
-            stroke: primaryColor,
+            // strokeWidth: 1,
+            // stroke: primaryColor,
             name: 'RectWrapper'
         });
         rectWrapper.width(rectWidth);
         rectWrapper.height(rectHeight);
 
         toolTip.add(rectWrapper);
-        icon && toolTip.add(icon);
+        // icon && toolTip.add(icon);
         toolTip.add(simpleText);
         toolTip.setPosition(this.getTooltipPosition(rectWrapper, tooltipPosition));
 
@@ -98,18 +98,18 @@ export class BestPracticeService extends PointService {
         }
     }
 
-    private iconBestPractice(): Konva.Group {
-        const group = new Konva.Group({
-            x: 0,
-            y: 0,
-        });
-        group.add(new Konva.Path({
-            x: 0,
-            y: 0,
-            data:
-                'M12,3 L1,9 L5,11.18 L5,17.18 L12,21 L19,17.18 L19,11.18 L21,10.09 L21,17 L23,17 L23,9 L12,3 Z M18.82,9 L12,12.72 L5.18,9 L12,5.28 L18.82,9 Z M17,15.99 L12,18.72 L7,15.99 L7,12.27 L12,15 L17,12.27 L17,15.99 Z',
-            fill: '#ffffff',
-        }));
-        return group;
-    }
+    // private iconBestPractice(): Konva.Group {
+    //     const group = new Konva.Group({
+    //         x: 0,
+    //         y: 0,
+    //     });
+    //     group.add(new Konva.Path({
+    //         x: 0,
+    //         y: 0,
+    //         data:
+    //             'M12,3 L1,9 L5,11.18 L5,17.18 L12,21 L19,17.18 L19,11.18 L21,10.09 L21,17 L23,17 L23,9 L12,3 Z M18.82,9 L12,12.72 L5.18,9 L12,5.28 L18.82,9 Z M17,15.99 L12,18.72 L7,15.99 L7,12.27 L12,15 L17,12.27 L17,15.99 Z',
+    //         fill: '#ffffff',
+    //     }));
+    //     return group;
+    // }
 }

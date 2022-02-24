@@ -63,9 +63,9 @@ export abstract class PointService {
         ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
 
         if (triangleWidth && triangleHeight && position === 'left') {
-            ctx.lineTo(x + width, (y + height - triangleHeight) / 2);
+            ctx.lineTo(x + width, (y + height - triangleWidth) / 2);
             ctx.lineTo(x + width + triangleHeight, (y + height) / 2);
-            ctx.lineTo(x + width, (y + height + triangleHeight) / 2);
+            ctx.lineTo(x + width, (y + height + triangleWidth) / 2);
         }
 
         ctx.lineTo(x + width, y + height - radius.br);
@@ -81,9 +81,9 @@ export abstract class PointService {
         ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
 
         if (triangleWidth && triangleHeight && position === 'right') {
-            ctx.lineTo(x, (y + height + triangleHeight) / 2);
+            ctx.lineTo(x, (y + height + triangleWidth) / 2);
             ctx.lineTo(x - triangleHeight, (y + height) / 2);
-            ctx.lineTo(x, (y + height - triangleHeight) / 2);
+            ctx.lineTo(x, (y + height - triangleWidth) / 2);
         }
 
         ctx.lineTo(x, y + radius.tl);
@@ -93,7 +93,7 @@ export abstract class PointService {
 
     getTooltipPosition(wrapper: Konva.Shape, tooltipPosition: string): {x: number, y: number} {
         const pos = {x: 0, y: 0};
-        const gap = 26;
+        const gap = 45;
         const height = 40;
         const width = wrapper.width();
         switch (tooltipPosition) {

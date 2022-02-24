@@ -27,13 +27,13 @@ export class LinkService extends PointService {
 
     private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition?: string): Konva.Group {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
-        const textColor = tooltipConfig.textColor ?? '#ffffff';
-        const paddingLeft = 10;
+        const textColor = '#ffffff';
+        const paddingLeft = 15;
         const paddingTop = 14;
         let rectWidth = 160;
         const rectHeight = 40;
-        const triangleWidth = 14;
-        const triangleHeight = 7;
+        const triangleWidth = 9;
+        const triangleHeight = 20;
 
         const toolTip = new Konva.Group({
             name: 'Tooltip',
@@ -49,15 +49,14 @@ export class LinkService extends PointService {
             fill: textColor,
             fontFamily: 'Poppins',
             fontStyle: '400',
-            textDecoration: 'underline',
         });
-        let contentWidth = simpleText.width();
         const icon: Konva.Group = this.iconLink();
-        icon.setPosition({x: 9, y: 16});
-        contentWidth += 34;
-        simpleText.x(37);
-
-        rectWidth = contentWidth + 18;
+        icon.setPosition({
+            x: paddingLeft + simpleText.width() + 10,
+            y: 8
+        });
+        icon.width(14);
+        rectWidth = simpleText.width() + icon.width() + paddingLeft * 2;
         const rectWrapper = new Konva.Shape({
             sceneFunc: (context, shape) => {
                 this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], triangleWidth, triangleHeight, tooltipPosition)
@@ -65,10 +64,10 @@ export class LinkService extends PointService {
             },
             x: 0,
             y: 0,
-            fill: '#ffffff',
-            shadowColor: '#BBBBBB',
-            shadowBlur: 14,
-            shadowOffset: { x: 0, y: 2 },
+            fill: '#0372FF',
+            shadowColor: '#000000',
+            shadowBlur: 9,
+            shadowOffset: { x: 0, y: 3 },
             shadowOpacity: 0.5,
             name: 'RectWrapper',
         });
@@ -103,8 +102,8 @@ export class LinkService extends PointService {
             x: 0,
             y: 0,
             data:
-                'M15,0 L11,0 L11,2 L15,2 C16.65,2 18,3.35 18,5 C18,6.65 16.65,8 15,8 L11,8 L11,10 L15,10 C17.76,10 20,7.76 20,5 C20,2.24 17.76,0 15,0 Z M9,8 L5,8 C3.35,8 2,6.65 2,5 C2,3.35 3.35,2 5,2 L9,2 L9,0 L5,0 C2.24,0 0,2.24 0,5 C0,7.76 2.24,10 5,10 L9,10 L9,8 Z M6,4 L14,4 L14,6 L6,6 L6,4 Z',
-            fill: '#0372FF',
+                'M0.31858602,0.268109486 C0.691706792,-0.0792782832 1.25956615,-0.0867443695 1.64072036,0.232087943 L1.73189848,0.31858602 L13.0155,12.4380286 L1.70641335,23.7248399 C1.31550426,24.114979 0.68233959,24.1143548 0.292200472,23.7234457 C-0.0679279445,23.3626065 -0.0950982826,22.7953484 0.210313186,22.4033581 L0.293594623,22.3092328 L10.2351308,12.3865281 L0.268109486,1.68142195 C-0.0792782832,1.30830118 -0.0867443695,0.740441815 0.232087943,0.359287605 L0.31858602,0.268109486 Z',
+            fill: '#ffffff',
         }));
         return group;
     }

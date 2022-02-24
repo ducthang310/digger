@@ -12,7 +12,7 @@ export class LinkService extends PointService {
             draggable: data.draggable,
             rotation: data.rotation,
         });
-        point.add(this.createHotspot(data));
+        point.add(this.createHotspot(data, 7, false));
 
         if (data.text) {
             point.add(this.createToolTip({
@@ -53,7 +53,7 @@ export class LinkService extends PointService {
         const icon: Konva.Group = this.iconLink();
         icon.setPosition({
             x: paddingLeft + simpleText.width() + 10,
-            y: 8
+            y: 10
         });
         icon.width(14);
         rectWidth = simpleText.width() + icon.width() + paddingLeft * 2;
@@ -76,7 +76,9 @@ export class LinkService extends PointService {
         toolTip.add(rectWrapper);
         icon && toolTip.add(icon);
         toolTip.add(simpleText);
-        toolTip.setPosition(this.getTooltipPosition(rectWrapper, tooltipPosition));
+        const pos = this.getTooltipPosition(rectWrapper, tooltipPosition);
+        pos.y += 12;
+        toolTip.setPosition(pos);
 
         return toolTip;
     }
@@ -102,7 +104,7 @@ export class LinkService extends PointService {
             x: 0,
             y: 0,
             data:
-                'M0.31858602,0.268109486 C0.691706792,-0.0792782832 1.25956615,-0.0867443695 1.64072036,0.232087943 L1.73189848,0.31858602 L13.0155,12.4380286 L1.70641335,23.7248399 C1.31550426,24.114979 0.68233959,24.1143548 0.292200472,23.7234457 C-0.0679279445,23.3626065 -0.0950982826,22.7953484 0.210313186,22.4033581 L0.293594623,22.3092328 L10.2351308,12.3865281 L0.268109486,1.68142195 C-0.0792782832,1.30830118 -0.0867443695,0.740441815 0.232087943,0.359287605 L0.31858602,0.268109486 Z',
+                'M0.244774323,0.20599246 C0.531448498,-0.0609106705 0.967743195,-0.0666469744 1.26058958,0.178316578 L1.33064307,0.244774323 L10,9.55632021 L1.31106246,18.2281433 C1.01072126,18.5278929 0.524251539,18.5274133 0.224501919,18.2270721 C-0.0521900384,17.9498341 -0.0730654087,17.5140013 0.161586713,17.2128294 L0.225573065,17.1405116 L7.86380145,9.51675162 L0.20599246,1.2918612 C-0.0609106705,1.00518703 -0.0666469744,0.568892332 0.178316578,0.276045949 L0.244774323,0.20599246 Z',
             fill: '#ffffff',
         }));
         return group;

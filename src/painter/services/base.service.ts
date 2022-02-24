@@ -3,21 +3,25 @@ import { DefaultColor } from '../painter.constants';
 import { PainterUtility } from '../painter.utility';
 import { PainterPointInterface } from '../painter.interface';
 import { Context } from 'konva/lib/Context';
+import { NodeConfig } from 'konva/lib/Node';
 
 export abstract class PointService {
     abstract createShapes(data: PainterPointInterface, stage?: Konva.Stage): Promise<Konva.Group>;
     abstract changePointProperties(data: PainterPointInterface, point: Konva.Group): void;
 
-    createHotspot(data: PainterPointInterface): Konva.Circle {
+    createHotspot(data: PainterPointInterface, radius = 10, stroke = true): Konva.Circle {
         const primaryColor = data.primaryColor ?? DefaultColor;
         const strokeColor = PainterUtility.hex2rgba(primaryColor, 0.2);
-        const circle = new Konva.Circle({
-            radius: 10,
+        const circleData: NodeConfig = {
+            radius,
             fill: primaryColor,
-            stroke: strokeColor,
-            strokeWidth: 12,
             name: 'PointCircle'
-        });
+        };
+        if (stroke) {
+            circleData.stroke = strokeColor;
+            circleData.strokeWidth = 12;
+        }
+        const circle = new Konva.Circle(circleData);
         circle.setAttr('point_id', data.id);
         return circle;
     }

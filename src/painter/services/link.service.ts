@@ -77,7 +77,20 @@ export class LinkService extends PointService {
         icon && toolTip.add(icon);
         toolTip.add(simpleText);
         const pos = this.getTooltipPosition(rectWrapper, tooltipPosition);
-        pos.y += 12;
+
+        switch (tooltipPosition) {
+            case 'right':
+                pos.x -= 12;
+                break;
+            case 'bottom':
+                pos.y -= 12;
+                break;
+            case 'left':
+                pos.x += 12;
+                break;
+            default:
+                pos.y += 12;
+        }
         toolTip.setPosition(pos);
 
         return toolTip;

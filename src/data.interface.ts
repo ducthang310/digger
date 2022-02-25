@@ -28,9 +28,11 @@ export interface ZoomLevelInterface {
 }
 
 export enum PointType {
-    NORMAL,
+    TEXT,
+    LINK,
     BEST_PRACTICE,
-    MAINTENANCE
+    RISK,
+    COMING_SOON,
 }
 
 export interface Vector2d {

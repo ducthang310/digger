@@ -11,6 +11,7 @@ import { LinkService } from './services/link.service';
 import { BestPracticeService } from './services/best-practice.service';
 import { RiskService } from './services/risk.service';
 import { PointService } from './services/base.service';
+import { ComingSoonService } from './services/coming-soon.service';
 
 export class Painter implements PainterInterface {
     config: PainterConfigInterface;
@@ -227,7 +228,7 @@ export class Painter implements PainterInterface {
                         }
                     });
 
-                    if (pointData.type === PointType.BEST_PRACTICE || pointData.type === PointType.RISK) {
+                    if (pointData.type === PointType.BEST_PRACTICE || pointData.type === PointType.RISK || pointData.type === PointType.COMING_SOON) {
                         point.on('mouseenter', () => {
                             this.stage.container().style.cursor = 'pointer';
                             if (this.config.events && this.config.events.pointMouseenter) {
@@ -373,6 +374,9 @@ export class Painter implements PainterInterface {
                 break;
             case PointType.RISK:
                 service = new RiskService();
+                break;
+            case PointType.COMING_SOON:
+                service = new ComingSoonService();
                 break;
             default:
                 throw new Error('Point type is invalid');

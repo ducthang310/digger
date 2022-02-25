@@ -4,6 +4,7 @@ import { CalculatorInterface } from '../calculator/calculator.interface';
 import { PainterInterface, PainterPointInterface } from '../painter/painter.interface';
 import { Painter } from '../painter/painter';
 import { PointInterface, Vector2d, ZoomLevelInterface } from '../data.interface';
+import { DiggerUtility } from '../digger.utility';
 
 export const DEFAULT_ZOOM_GAP = 1.5;
 export const STANDARD_WIDTH = 1024;
@@ -24,6 +25,8 @@ export class Digger implements DiggerInterface {
     zoomGap: number;
     maxLevel: number;
     minLevel: number;
+    scaleValueMapper = new Map<number, number>();
+    scaleValues: number[] = [];
 
 
     constructor(config: DiggerConfigInterface) {
@@ -64,6 +67,8 @@ export class Digger implements DiggerInterface {
 
         this.zoomGap = this.config.zoomGap || DEFAULT_ZOOM_GAP;
         this.zoomLevelMapper = new Map<number, ZoomLevelInterface>();
+        this.scaleValueMapper = new Map<number, number>();
+        this.scaleValues = [];
 
         this.currentScaleValue = 1;
         this.currentPosition = {x: 0, y: 0};
@@ -71,7 +76,11 @@ export class Digger implements DiggerInterface {
             this.setMaxMinLevel();
             this.config.zoomLevels.forEach(z => {
                 this.zoomLevelMapper.set(z.levelIndex, z);
+                const scaleValue = DiggerUtility.calculateScaleValue(this.zoomGap, z.levelIndex);
+                this.scaleValueMapper.set(scaleValue, z.levelIndex);
+                this.scaleValues.push(scaleValue);
             });
+            this.scaleValues.sort();
             this.currentZoomLevel = this.config.zoomLevels[0];
             this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
         }
@@ -131,14 +140,16 @@ export class Digger implements DiggerInterface {
     }
 
     zoomIn(): void {
-        const val = Math.round((this.currentScaleValue + Number.EPSILON) * 100) / 100;
-        this.currentScaleValue = val + 0.1;
+        let levelIndex = this.currentZoomLevel ? this.currentZoomLevel.levelIndex : 1;
+        levelIndex += 1.05;
+        this.currentScaleValue = DiggerUtility.calculateScaleValue(this.zoomGap, levelIndex);
         this.painter.scale(this.currentScaleValue);
     }
 
     zoomOut(): void {
-        const val = Math.round((this.currentScaleValue + Number.EPSILON) * 100) / 100;
-        const newVal = val - 0.1;
+        let levelIndex = this.currentZoomLevel ? this.currentZoomLevel.levelIndex : 1;
+        levelIndex--;
+        const newVal = DiggerUtility.calculateScaleValue(this.zoomGap, levelIndex);
         this.currentScaleValue = newVal <= 1 ? 1 : newVal;
         this.painter.scale(this.currentScaleValue);
     }
@@ -156,9 +167,15 @@ export class Digger implements DiggerInterface {
     setZoomLevels(zoomLevels: ZoomLevelInterface[], redraw?: boolean): void {
         this.config.zoomLevels = zoomLevels;
         this.zoomLevelMapper = new Map<number, ZoomLevelInterface>();
+        this.scaleValueMapper = new Map<number, number>();
+        this.scaleValues = [];
         this.config.zoomLevels.forEach(z => {
             this.zoomLevelMapper.set(z.levelIndex, z);
+            const scaleValue = DiggerUtility.calculateScaleValue(this.zoomGap, z.levelIndex);
+            this.scaleValueMapper.set(scaleValue, z.levelIndex);
+            this.scaleValues.push(scaleValue);
         });
+        this.scaleValues.sort();
         this.setMaxMinLevel();
         let zl: ZoomLevelInterface;
         if (this.currentZoomLevel) {
@@ -280,7 +297,15 @@ export class Digger implements DiggerInterface {
     }
 
     private scaleToLevelIndex(scale: number): number {
-        return (scale < 1 ? 0 : Math.floor(Math.log(scale) / Math.log(this.zoomGap))) + 1;
+        let index;
+        const len = this.scaleValues.length;
+        for (let i = len - 1; i >= 0; i--) {
+            if (this.scaleValues[i] <= scale) {
+                index = this.scaleValueMapper.get(this.scaleValues[i]);
+                break;
+            }
+        }
+        return index ? index : 1;
     }
 
     private convertToPainterPoint(data: PointInterface): PainterPointInterface {

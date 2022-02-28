@@ -1,4 +1,4 @@
-import { PainterPointInterface } from '../painter.interface';
+import { PainterConfigInterface, PainterPointInterface } from '../painter.interface';
 import Konva from 'konva';
 import { PointService } from './base.service';
 import { Vector2d } from '../../data.interface';
@@ -207,4 +207,19 @@ export class TextService extends PointService {
     //     }
     //     return (window as any).appCacheService;
     // }
+
+    initEvents(point: Konva.Group, config: PainterConfigInterface): Konva.Group {
+        point.on('click', () => {
+            if (config.events?.pointClick) {
+                config.events.pointClick(point.id());
+            }
+        });
+        point.on('mouseenter', () => {
+            point.getStage().container().style.cursor = 'pointer';
+        });
+        point.on('mouseleave', () => {
+            point.getStage().container().style.cursor = 'default';
+        });
+        return point;
+    }
 }

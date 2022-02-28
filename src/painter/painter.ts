@@ -222,66 +222,7 @@ export class Painter implements PainterInterface {
             const service = this.getService(pointData.type);
             service.createShapes(pointData, this.stage)
                 .then(point => {
-                    point.on('click', () => {
-                        if (this.config.events?.pointClick) {
-                            this.config.events.pointClick(pointData.id);
-                        }
-                    });
-
-                    if (pointData.type === PointType.BEST_PRACTICE || pointData.type === PointType.RISK || pointData.type === PointType.COMING_SOON) {
-                        point.on('mouseenter', () => {
-                            this.stage.container().style.cursor = 'pointer';
-                            if (this.config.events && this.config.events.pointMouseenter) {
-                                this.config.events.pointMouseenter(pointData.id, point.getPosition());
-                            }
-                        });
-                        point.on('mouseleave', () => {
-                            this.stage.container().style.cursor = 'default';
-                            if (this.config.events && this.config.events.pointMouseleave) {
-                                this.config.events.pointMouseleave(pointData.id, point.getPosition());
-                            }
-                        });
-                    } else if (pointData.type === PointType.LINK) {
-                        point.find('.PointCircle').forEach(c => {
-                            c.on('mouseenter', () => {
-                                this.stage.container().style.cursor = 'pointer';
-                                if (this.config.events && this.config.events.pointMouseenter) {
-                                    this.config.events.pointMouseenter(pointData.id, point.getPosition());
-                                }
-                                point.find('.Tooltip').forEach(t => {
-                                    t.hide();
-                                });
-                                point.clearCache();
-                            });
-                            c.on('mouseleave', () => {
-                                this.stage.container().style.cursor = 'default';
-                                if (this.config.events && this.config.events.pointMouseleave) {
-                                    this.config.events.pointMouseleave(pointData.id, point.getPosition());
-                                }
-                                point.find('.Tooltip').forEach(t => {
-                                    t.show();
-                                });
-                                point.clearCache();
-                            });
-                        });
-                    } else {
-                        point.on('mouseenter', () => {
-                            this.stage.container().style.cursor = 'pointer';
-                        });
-                        point.on('mouseleave', () => {
-                            this.stage.container().style.cursor = 'default';
-                        });
-                    }
-
-                    point.find('.Tooltip').forEach(t => {
-                        t.on('click', (evt) => {
-                            if (this.config.events?.tooltipClick) {
-                                evt.cancelBubble = true;
-                                this.config.events.tooltipClick(pointData.id);
-                            }
-                        });
-                    });
-
+                    point = service.initEvents(point, this.config);
                     point.setPosition(pointData.position);
                     point.setAttrs({
                         scaleX: 1 / this.stage.scaleX(),

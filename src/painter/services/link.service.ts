@@ -1,4 +1,4 @@
-import { PainterPointInterface, TooltipConfig } from '../painter.interface';
+import { PainterConfigInterface, PainterPointInterface, TooltipConfig } from '../painter.interface';
 import Konva from 'konva';
 import { DefaultColor } from '../painter.constants';
 import { PointService } from './base.service';
@@ -121,5 +121,48 @@ export class LinkService extends PointService {
             fill: '#ffffff',
         }));
         return group;
+    }
+
+    initEvents(point: Konva.Group, config: PainterConfigInterface): Konva.Group {
+        point.on('click', () => {
+            if (config.events?.pointClick) {
+                config.events.pointClick(point.id());
+            }
+        });
+        point.find('.Tooltip').forEach(t => {
+            t.on('click', (evt) => {
+                if (config.events?.tooltipClick) {
+                    evt.cancelBubble = true;
+                    config.events.tooltipClick(point.id());
+                }
+            });
+        });
+        point.on('mouseenter', (evt) => {
+            point.getStage().container().style.cursor = 'pointer';
+            if (config.events && config.events.pointMouseenter && evt.target.name() === 'PointCircle') {
+                config.events.pointMouseenter(point.id(), point.getPosition());
+            }
+            point.find('.RectWrapper').forEach((t) => {
+                (t as Konva.Shape).fill('#0854B5');
+            });
+            point.find('.PointCircle').forEach((t) => {
+                (t as Konva.Shape).fill('#0854B5');
+            });
+            point.clearCache();
+        });
+        point.on('mouseleave', (evt) => {
+            point.getStage().container().style.cursor = 'default';
+            if (config.events && config.events.pointMouseleave && evt.target.name() === 'PointCircle') {
+                config.events.pointMouseleave(point.id(), point.getPosition());
+            }
+            point.find('.RectWrapper').forEach((t) => {
+                (t as Konva.Shape).fill('#0372FF');
+            });
+            point.find('.PointCircle').forEach((t) => {
+                (t as Konva.Shape).fill('#0372FF');
+            });
+            point.clearCache();
+        });
+        return point;
     }
 }

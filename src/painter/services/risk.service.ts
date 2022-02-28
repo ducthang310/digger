@@ -1,4 +1,4 @@
-import { PainterPointInterface, TooltipConfig } from '../painter.interface';
+import { PainterConfigInterface, PainterPointInterface, TooltipConfig } from '../painter.interface';
 import Konva from 'konva';
 import { DefaultColor, PointSubtype } from '../painter.constants';
 import { PointService } from './base.service';
@@ -196,4 +196,27 @@ export class RiskService extends PointService {
     //     group.add(clockwise, clock);
     //     return group;
     // }
+
+    initEvents(point: Konva.Group, config: PainterConfigInterface): Konva.Group {
+        point.on('click', (evt) => {
+            if (config.events?.pointClick && evt.target.name() === 'PointCircle') {
+                config.events.pointClick(point.id());
+            } else if (config.events?.tooltipClick && evt.target.name() === 'Tooltip') {
+                config.events.tooltipClick(point.id());
+            }
+        });
+        point.on('mouseenter', () => {
+            point.getStage().container().style.cursor = 'pointer';
+            if (config.events && config.events.pointMouseenter) {
+                config.events.pointMouseenter(point.id(), point.getPosition());
+            }
+        });
+        point.on('mouseleave', () => {
+            point.getStage().container().style.cursor = 'default';
+            if (config.events && config.events.pointMouseleave) {
+                config.events.pointMouseleave(point.id(), point.getPosition());
+            }
+        });
+        return point;
+    }
 }

@@ -57,10 +57,13 @@ export abstract class PointService {
         const radius = {tl: radiusArr[0], tr: radiusArr[1], br: radiusArr[2], bl: radiusArr[3]};
         ctx.beginPath();
         ctx.moveTo(x + radius.tl, y);
+        const curveW = 2;
+        const curveH = 1;
 
         if (triangleWidth && triangleHeight && position === 'bottom') {
             ctx.lineTo((x + width - triangleWidth) / 2, y);
-            ctx.lineTo((x + width ) / 2, y - triangleHeight);
+            ctx.lineTo((x + width - curveW) / 2, y - triangleHeight + curveH);
+            ctx.quadraticCurveTo((x + width ) / 2, y - triangleHeight, (x + width + curveW) / 2, y - triangleHeight + curveH);
             ctx.lineTo((x + width + triangleWidth) / 2, y);
         }
 
@@ -69,7 +72,8 @@ export abstract class PointService {
 
         if (triangleWidth && triangleHeight && position === 'left') {
             ctx.lineTo(x + width, (y + height - triangleWidth) / 2);
-            ctx.lineTo(x + width + triangleHeight, (y + height) / 2);
+            ctx.lineTo(x + width + triangleHeight - curveH, (y + height - curveW) / 2);
+            ctx.quadraticCurveTo(x + width + triangleHeight, (y + height) / 2, x + width + triangleHeight - curveH, (y + height + curveW) / 2);
             ctx.lineTo(x + width, (y + height + triangleWidth) / 2);
         }
 
@@ -78,7 +82,8 @@ export abstract class PointService {
 
         if (triangleWidth && triangleHeight && position === 'top') {
             ctx.lineTo((x + width + triangleWidth) / 2, y + height);
-            ctx.lineTo((x + width ) / 2, y + height + triangleHeight);
+            ctx.lineTo((x + width + curveW) / 2, y + height + triangleHeight - curveH);
+            ctx.quadraticCurveTo((x + width ) / 2, y + height + triangleHeight, (x + width - curveW) / 2, y + height + triangleHeight - curveH);
             ctx.lineTo((x + width - triangleWidth) / 2, y + height);
         }
 
@@ -87,7 +92,8 @@ export abstract class PointService {
 
         if (triangleWidth && triangleHeight && position === 'right') {
             ctx.lineTo(x, (y + height + triangleWidth) / 2);
-            ctx.lineTo(x - triangleHeight, (y + height) / 2);
+            ctx.lineTo(x - triangleHeight + curveH, (y + height + curveW) / 2);
+            ctx.quadraticCurveTo(x - triangleHeight, (y + height) / 2, x - triangleHeight + curveH, (y + height - curveW) / 2);
             ctx.lineTo(x, (y + height - triangleWidth) / 2);
         }
 

@@ -25,6 +25,7 @@ export class Painter implements PainterInterface {
     pointLayer: Konva.Layer;
     // pointMapper: Map<string, Konva.Group>;
     visibleImageIds: string[];
+    maxScaleValue = 100;
 
     constructor(config: PainterConfigInterface) {
         if (!config || !config.containerId) {
@@ -58,6 +59,10 @@ export class Painter implements PainterInterface {
         this.initEvents();
     }
 
+    setMaxScaleValue(val: number): void {
+        this.maxScaleValue = val;
+    }
+
     initEvents(): void {
         this.stage.on('wheel', (e) => {
             e.evt.preventDefault();
@@ -67,9 +72,14 @@ export class Painter implements PainterInterface {
                 x: (pointer.x - this.stage.x()) / oldScale,
                 y: (pointer.y - this.stage.y()) / oldScale,
             };
-            const newScale =
+            let newScale =
                 e.evt.deltaY < 0 ? oldScale * this.config.scaleBy : oldScale / this.config.scaleBy;
+            newScale = newScale < 1 ? 1 : newScale;
+            newScale = this.maxScaleValue < newScale ? this.maxScaleValue : newScale;
 
+            if (oldScale === newScale) {
+                return;
+            }
             this.stage.scale({x: newScale, y: newScale});
 
             const newPos = {

@@ -76,8 +76,8 @@ export class Calculator implements CalculatorInterface {
                 const key = `${i}x${j}`;
                 const x = (i - 1) * standardImageSize;
                 const y = (j - 1) * standardImageSize;
-                const width = i === indexEndX ? (standardWidth - x) : standardImageSize;
-                const height = j === indexEndY ? (standardHeight - y) : standardImageSize;
+                const width = i === maxIndexX ? (standardWidth - x) : standardImageSize;
+                const height = j === maxIndexY ? (standardHeight - y) : standardImageSize;
                 images.push({
                     id: key,
                     url: this.generateSubImageUrl(baseImage.url, key),

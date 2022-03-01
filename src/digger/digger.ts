@@ -81,6 +81,7 @@ export class Digger implements DiggerInterface {
                 this.scaleValues.push(scaleValue);
             });
             this.scaleValues.sort();
+            this.painter.setMaxScaleValue(Math.max(...this.scaleValues));
             this.currentZoomLevel = this.config.zoomLevels[0];
             this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
         }
@@ -181,6 +182,7 @@ export class Digger implements DiggerInterface {
             this.scaleValues.push(scaleValue);
         });
         this.scaleValues.sort();
+        this.painter.setMaxScaleValue(Math.max(...this.scaleValues));
         this.setMaxMinLevel();
         let zl: ZoomLevelInterface;
         if (this.currentZoomLevel) {

@@ -68,4 +68,5 @@ export interface PainterInterface {
     changePointProperties(point: PainterPointInterface): void;
     removePoint(id: string): void;
     removeAllPoints(): void;
+    setMaxScaleValue(val: number): void;
 }

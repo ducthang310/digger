@@ -93,7 +93,10 @@ export class Painter implements PainterInterface {
     }
 
     reset(): void {
-        //
+        this.imageLayer.destroyChildren();
+        this.pointLayer.destroyChildren();
+        this.stage.position({x: 0, y: 0});
+        this.stage.scale({x: 1, y: 1});
     }
 
     private keepThePointSize(): void {

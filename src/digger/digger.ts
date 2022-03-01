@@ -124,7 +124,12 @@ export class Digger implements DiggerInterface {
     }
 
     reset(): void {
-        //
+        this.zoomLevelMapper = new Map<number, ZoomLevelInterface>();
+        this.scaleValueMapper = new Map<number, number>();
+        this.scaleValues = [];
+        this.currentScaleValue = 1;
+        this.currentPosition = {x: 0, y: 0};
+        this.painter.reset();
     }
 
     updateScaleBy(val: number): void {

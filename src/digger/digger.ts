@@ -339,6 +339,8 @@ export class Digger implements DiggerInterface {
             ),
             tooltipPosition: data.tooltip_position,
             pin_to_edge: data.pin_to_edge,
+            hide_hotspot: data.hide_hotspot,
+            hide_chevron: data.hide_chevron,
         }
     }
 }

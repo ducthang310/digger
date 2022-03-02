@@ -12,28 +12,32 @@ export class LinkService extends PointService {
             draggable: data.draggable,
             rotation: data.rotation,
         });
-        point.add(this.createHotspot(data, 7, false));
+        const hotspot = this.createHotspot(data, 7, false);
+        if (data.hide_hotspot) {
+            hotspot.hide();
+        }
+        point.add(hotspot);
 
         if (data.text) {
             point.add(this.createToolTip({
                 text: data.text,
                 primaryColor: primaryColor,
                 textColor: data.textColor
-            }, data.tooltipPosition));
+            }, data.tooltipPosition, data.hide_hotspot, data.hide_chevron));
         }
 
         return point;
     }
 
-    private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition?: string): Konva.Group {
+    private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition?: string, hideHotspot?: boolean, hideChevron?: boolean): Konva.Group {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
         const textColor = '#ffffff';
         const paddingLeft = 15;
         const paddingTop = 14;
         let rectWidth = 160;
         const rectHeight = 40;
-        const triangleWidth = 9;
-        const triangleHeight = 20;
+        let triangleWidth = 9;
+        let triangleHeight = 20;
 
         const toolTip = new Konva.Group({
             name: 'Tooltip',
@@ -50,13 +54,23 @@ export class LinkService extends PointService {
             fontFamily: 'Poppins',
             fontStyle: '400',
         });
-        const icon: Konva.Group = this.iconLink();
-        icon.setPosition({
-            x: paddingLeft + simpleText.width() + 10,
-            y: 10
-        });
-        icon.width(14);
-        rectWidth = simpleText.width() + icon.width() + paddingLeft * 2;
+        let icon: Konva.Group;
+        let iconWidth = 0;
+        if (!hideChevron) {
+            icon = this.iconLink();
+            icon.setPosition({
+                x: paddingLeft + simpleText.width() + 10,
+                y: 10
+            });
+            icon.width(14);
+            iconWidth = icon.width();
+        }
+        if (hideHotspot) {
+            triangleWidth = 0;
+            triangleHeight = 0;
+        }
+
+        rectWidth = simpleText.width() + iconWidth + paddingLeft * 2;
         const rectWrapper = new Konva.Shape({
             sceneFunc: (context, shape) => {
                 this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], triangleWidth, triangleHeight, tooltipPosition)

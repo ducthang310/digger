@@ -62,4 +62,6 @@ export interface PointInterface {
     pin_to_edge?: string;
     min_zoom?: number;
     max_zoom?: number;
+    hide_hotspot?: boolean;
+    hide_chevron?: boolean;
 }

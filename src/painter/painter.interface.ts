@@ -35,6 +35,8 @@ export interface PainterPointInterface {
     draggable?: boolean,
     tooltipPosition?: string;
     pin_to_edge?: string;
+    hide_hotspot?: boolean;
+    hide_chevron?: boolean;
 }
 
 export interface TooltipConfig {

@@ -235,7 +235,7 @@ export class Painter implements PainterInterface {
             const service = this.getService(pointData.type);
             service.createShapes(pointData, this.stage)
                 .then(point => {
-                    point = service.initEvents(point, this.config);
+                    point = service.initEvents(point, this.config, pointData);
                     point.setPosition(pointData.position);
                     point.setAttrs({
                         scaleX: 1 / this.stage.scaleX(),

@@ -8,7 +8,7 @@ import { NodeConfig } from 'konva/lib/Node';
 export abstract class PointService {
     abstract createShapes(data: PainterPointInterface, stage?: Konva.Stage): Promise<Konva.Group>;
     abstract changePointProperties(data: PainterPointInterface, point: Konva.Group): void;
-    abstract initEvents(point: Konva.Group, config: PainterConfigInterface): Konva.Group;
+    abstract initEvents(point: Konva.Group, config: PainterConfigInterface, data?: PainterPointInterface): Konva.Group;
 
     createHotspot(data: PainterPointInterface, radius = 10, stroke = true): Konva.Circle {
         const primaryColor = data.primaryColor ?? DefaultColor;

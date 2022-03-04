@@ -64,4 +64,6 @@ export interface PointInterface {
     max_zoom?: number;
     hide_hotspot?: boolean;
     hide_chevron?: boolean;
+    link_background_color?: string;
+    link_background_color_hovering?: string;
 }

@@ -341,6 +341,8 @@ export class Digger implements DiggerInterface {
             pin_to_edge: data.pin_to_edge,
             hide_hotspot: data.hide_hotspot,
             hide_chevron: data.hide_chevron,
+            link_background_color: data.link_background_color,
+            link_background_color_hovering: data.link_background_color_hovering,
         }
     }
 }

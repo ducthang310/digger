@@ -37,6 +37,8 @@ export interface PainterPointInterface {
     pin_to_edge?: string;
     hide_hotspot?: boolean;
     hide_chevron?: boolean;
+    link_background_color?: string;
+    link_background_color_hovering?: string;
 }
 
 export interface TooltipConfig {

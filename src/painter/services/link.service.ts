@@ -12,7 +12,7 @@ export class LinkService extends PointService {
             draggable: data.draggable,
             rotation: data.rotation,
         });
-        const hotspot = this.createHotspot(data, 7, false);
+        const hotspot = this.createHotspot({...data, primaryColor: data.link_background_color}, 7, false);
         if (data.hide_hotspot) {
             hotspot.hide();
         }
@@ -23,14 +23,16 @@ export class LinkService extends PointService {
                 text: data.text,
                 primaryColor: primaryColor,
                 textColor: data.textColor
-            }, data.tooltipPosition, data.hide_hotspot, data.hide_chevron));
+            }, data.tooltipPosition, data));
         }
 
         return point;
     }
 
-    private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition?: string, hideHotspot?: boolean, hideChevron?: boolean): Konva.Group {
+    private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition: string, data: PainterPointInterface): Konva.Group {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
+        const hideChevron = data.hide_chevron;
+        const hideHotspot = data.hide_hotspot;
         const textColor = '#ffffff';
         const paddingLeft = 15;
         const paddingTop = 14;
@@ -78,7 +80,7 @@ export class LinkService extends PointService {
             },
             x: 0,
             y: 0,
-            fill: '#0372FF',
+            fill: data.link_background_color,
             shadowColor: '#000000',
             shadowBlur: 9,
             shadowOffset: { x: 0, y: 3 },
@@ -137,7 +139,7 @@ export class LinkService extends PointService {
         return group;
     }
 
-    initEvents(point: Konva.Group, config: PainterConfigInterface): Konva.Group {
+    initEvents(point: Konva.Group, config: PainterConfigInterface, data: PainterPointInterface): Konva.Group {
         point.on('click', () => {
             if (config.events?.pointClick) {
                 config.events.pointClick(point.id());
@@ -157,10 +159,10 @@ export class LinkService extends PointService {
                 config.events.pointMouseenter(point.id(), point.getPosition());
             }
             point.find('.RectWrapper').forEach((t) => {
-                (t as Konva.Shape).fill('#0854B5');
+                (t as Konva.Shape).fill(data.link_background_color_hovering);
             });
             point.find('.PointCircle').forEach((t) => {
-                (t as Konva.Shape).fill('#0854B5');
+                (t as Konva.Shape).fill(data.link_background_color_hovering);
             });
             point.clearCache();
         });
@@ -170,10 +172,10 @@ export class LinkService extends PointService {
                 config.events.pointMouseleave(point.id(), point.getPosition());
             }
             point.find('.RectWrapper').forEach((t) => {
-                (t as Konva.Shape).fill('#0372FF');
+                (t as Konva.Shape).fill(data.link_background_color);
             });
             point.find('.PointCircle').forEach((t) => {
-                (t as Konva.Shape).fill('#0372FF');
+                (t as Konva.Shape).fill(data.link_background_color);
             });
             point.clearCache();
         });

@@ -1,11 +1,10 @@
-import { PainterConfigInterface, PainterPointInterface, TooltipConfig } from '../painter.interface';
+import { PainterConfigInterface, PainterPointInterface } from '../painter.interface';
 import Konva from 'konva';
-import { DefaultColor } from '../painter.constants';
 import { PointService } from './base.service';
 
 export class LinkService extends PointService {
     async createShapes(data: PainterPointInterface): Promise<Konva.Group> {
-        const primaryColor = data.primaryColor ?? DefaultColor;
+        // const primaryColor = data.primaryColor ?? DefaultColor;
         const point = new Konva.Group({
             id: data.id,
             name: 'Point',
@@ -19,25 +18,21 @@ export class LinkService extends PointService {
         point.add(hotspot);
 
         if (data.text) {
-            point.add(this.createToolTip({
-                text: data.text,
-                primaryColor: primaryColor,
-                textColor: data.textColor
-            }, data.tooltipPosition, data));
+            point.add(await this.createToolTip(data.tooltipPosition, data));
         }
 
         return point;
     }
 
-    private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition: string, data: PainterPointInterface): Konva.Group {
+    private async createToolTip(tooltipPosition: string, data: PainterPointInterface): Promise<Konva.Group> {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
         const hideChevron = data.hide_chevron;
         const hideHotspot = data.hide_hotspot;
         const textColor = '#ffffff';
-        const paddingLeft = 15;
-        const paddingTop = 14;
+        let paddingLeft = 12;
+        let paddingTop = 14;
         let rectWidth = 160;
-        const rectHeight = 40;
+        let rectHeight = 40;
         let triangleWidth = 9;
         let triangleHeight = 20;
 
@@ -47,23 +42,34 @@ export class LinkService extends PointService {
             y: 0,
         });
 
-        const simpleText = new Konva.Text({
-            x: paddingLeft,
-            y: paddingTop,
-            text: tooltipConfig.text,
-            fontSize: 14,
-            fill: textColor,
-            fontFamily: 'Poppins',
-            fontStyle: '400',
-        });
         let icon: Konva.Group;
         let iconWidth = 0;
+        let iconPaddingLeft = 10;
+        let mainText: Konva.Shape;
+        let textScale = 1;
+        if (!data.title_base64) {
+            const textStr = data.text ? data.text.replace(/(<([^>]+)>)/gi, "") : '';
+            mainText = new Konva.Text({
+                x: paddingLeft,
+                y: paddingTop,
+                text: textStr,
+                fontSize: 14,
+                fill: textColor,
+                fontFamily: 'Poppins',
+                fontStyle: '400',
+            });
+        } else {
+            paddingLeft -= 3;
+            paddingTop -= 5;
+            textScale = 0.5;
+            iconPaddingLeft -= 3;
+            mainText = await this.getImage(data.title_base64, textScale);
+            mainText.setPosition({x: paddingLeft, y: paddingTop});
+        }
+        const textWidth = mainText.width() * textScale;
+        const textHeight = mainText.height() * textScale;
         if (!hideChevron) {
             icon = this.iconLink();
-            icon.setPosition({
-                x: paddingLeft + simpleText.width() + 10,
-                y: 10
-            });
             icon.width(14);
             iconWidth = icon.width();
         }
@@ -72,7 +78,15 @@ export class LinkService extends PointService {
             triangleHeight = 0;
         }
 
-        rectWidth = simpleText.width() + iconWidth + paddingLeft * 2;
+        rectWidth = textWidth + iconWidth + paddingLeft * 2;
+        rectHeight = textHeight + paddingTop * 2;
+        if (icon) {
+            icon.setPosition({
+                x: paddingLeft + textWidth + iconPaddingLeft,
+                y: Math.round(rectHeight / 2 - 10)
+            })
+        }
+
         const rectWrapper = new Konva.Shape({
             sceneFunc: (context, shape) => {
                 this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], triangleWidth, triangleHeight, tooltipPosition)
@@ -91,7 +105,7 @@ export class LinkService extends PointService {
         rectWrapper.height(rectHeight);
         toolTip.add(rectWrapper);
         icon && toolTip.add(icon);
-        toolTip.add(simpleText);
+        toolTip.add(mainText);
         const pos = this.getTooltipPosition(rectWrapper, tooltipPosition);
 
         switch (tooltipPosition) {
@@ -110,6 +124,24 @@ export class LinkService extends PointService {
         toolTip.setPosition(pos);
 
         return toolTip;
+    }
+
+    private async getImage(dataUrl: string, textScale: number): Promise<Konva.Image> {
+        return new Promise((resolve, reject) => {
+            const imageObj = new Image();
+            imageObj.onload = () => {
+                const mainText = new Konva.Image({
+                    x: 0,
+                    y: 0,
+                    scaleX: textScale,
+                    scaleY: textScale,
+                    image: imageObj,
+                });
+                resolve(mainText);
+            };
+            imageObj.onerror = () => reject();
+            imageObj.src = dataUrl;
+        });
     }
 
     changePointProperties(pointData: PainterPointInterface, point: Konva.Group): void {

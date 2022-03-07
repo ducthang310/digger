@@ -39,6 +39,7 @@ export interface PainterPointInterface {
     hide_chevron?: boolean;
     link_background_color?: string;
     link_background_color_hovering?: string;
+    title_base64?: string;
 }
 
 export interface TooltipConfig {

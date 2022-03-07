@@ -105,7 +105,7 @@ export abstract class PointService {
     getTooltipPosition(wrapper: Konva.Shape, tooltipPosition: string): {x: number, y: number} {
         const pos = {x: 0, y: 0};
         const gap = 45;
-        const height = 40;
+        const height = wrapper.height();
         const width = wrapper.width();
         switch (tooltipPosition) {
             case 'right':

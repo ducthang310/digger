@@ -343,6 +343,7 @@ export class Digger implements DiggerInterface {
             hide_chevron: data.hide_chevron,
             link_background_color: data.link_background_color,
             link_background_color_hovering: data.link_background_color_hovering,
+            title_base64: data.title_base64,
         }
     }
 }

@@ -30,7 +30,7 @@ export class RiskService extends PointService {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
         // const primaryColor = tooltipConfig.primaryColor ?? DefaultColor;
         const textColor = tooltipConfig.textColor ?? '#ffffff';
-        const paddingLeft = 15;
+        const paddingLeft = 12;
         const paddingTop = 14;
         let rectWidth = 160;
         let rectHeight = 40;

@@ -29,7 +29,7 @@ export class BestPracticeService extends PointService {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
         const primaryColor = '#ffffff';
         const textColor = tooltipConfig.primaryColor ?? '#ffffff';
-        const paddingLeft = 15;
+        const paddingLeft = 12;
         const paddingTop = 14;
         let rectWidth = 160;
         const rectHeight = 40;

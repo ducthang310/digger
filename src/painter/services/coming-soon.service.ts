@@ -30,7 +30,7 @@ export class ComingSoonService extends PointService {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
         const primaryColor = tooltipConfig.primaryColor ?? '#ffffff';
         const textColor = tooltipConfig.textColor ?? '#000000';
-        const paddingLeft = 15;
+        const paddingLeft = 12;
         const paddingTop = 14;
         let rectWidth = 160;
         const rectHeight = 40;

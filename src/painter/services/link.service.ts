@@ -187,40 +187,10 @@ export class LinkService extends PointService {
                 }
             });
         });
-        point.on('mouseenter', (evt) => {
+        point.on('mouseenter', () => {
             point.getStage().container().style.cursor = 'pointer';
-            if (
-                config.events && config.events.pointMouseenter
-                && (evt.target.name() === 'PointCircle' || data.hide_hotspot)
-            ) {
-                const pos = point.getPosition();
-                if (data.hide_hotspot) {
-                    const tooltip = point.findOne('.Tooltip');
-                    if (tooltip) {
-                        const tPos = tooltip.getPosition();
-                        const width = tooltip.width();
-                        const height = tooltip.height();
-                        switch (data.tooltipPosition) {
-                            case 'right':
-                                pos.x += tPos.x + width;
-                                pos.y += tPos.y  + height / 2;
-                                break;
-                            case 'bottom':
-                                pos.x += tPos.x + width / 2;
-                                pos.y += tPos.y + height;
-                                break;
-                            case 'left':
-                                pos.x += tPos.x;
-                                pos.y += tPos.y  + height / 2;
-                                break;
-                            default:
-                                pos.x += tPos.x + width / 2;
-                                pos.y += tPos.y;
-                        }
-                    }
-                }
-
-                config.events.pointMouseenter(point.id(), pos);
+            if (config.events && config.events.pointMouseenter) {
+                config.events.pointMouseenter(point.id(), point.getPosition());
             }
             point.find('.RectWrapper').forEach((t) => {
                 (t as Konva.Shape).fill(data.link_background_color_hovering);
@@ -230,12 +200,9 @@ export class LinkService extends PointService {
             });
             point.clearCache();
         });
-        point.on('mouseleave', (evt) => {
+        point.on('mouseleave', () => {
             point.getStage().container().style.cursor = 'default';
-            if (
-                config.events && config.events.pointMouseleave
-                && (evt.target.name() === 'PointCircle' || data.hide_hotspot)
-            ) {
+            if (config.events && config.events.pointMouseleave) {
                 config.events.pointMouseleave(point.id(), point.getPosition());
             }
             point.find('.RectWrapper').forEach((t) => {

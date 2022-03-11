@@ -101,7 +101,7 @@ export class RiskService extends PointService {
             name: 'RectWrapper'
         });
         rectWrapper.width(rectWidth + 2);
-        rectWrapper.height(45);
+        rectWrapper.height(rectHeight);
         toolTip.add(rectWrapper);
         // toolTip.add(headRect);
         toolTip.add(simpleText);

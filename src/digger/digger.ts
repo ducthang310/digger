@@ -145,6 +145,12 @@ export class Digger implements DiggerInterface {
         this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
     }
 
+    zoomTo(levelIndex: number): void {
+        levelIndex += 0.05;
+        this.currentScaleValue = DiggerUtility.calculateScaleValue(this.zoomGap, levelIndex);
+        this.painter.scale(this.currentScaleValue);
+    }
+
     zoomIn(): void {
         let levelIndex = this.currentZoomLevel ? this.currentZoomLevel.levelIndex : 1;
         levelIndex += 1.05;

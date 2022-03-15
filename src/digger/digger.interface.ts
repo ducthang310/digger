@@ -13,6 +13,7 @@ export interface DiggerInterface {
     init(config: DiggerConfigInterface): void;
     reset(): void;
 
+    zoomTo(levelIndex: number): void;
     zoomIn(): void;
     zoomOut(): void;
     redraw(): void;

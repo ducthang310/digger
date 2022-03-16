@@ -1,11 +1,10 @@
-import { PainterConfigInterface, PainterPointInterface, TooltipConfig } from '../painter.interface';
+import { PainterConfigInterface, PainterPointInterface } from '../painter.interface';
 import Konva from 'konva';
-import { DefaultColor } from '../painter.constants';
 import { PointService } from './base.service';
+import { ShapeConfig } from 'konva/lib/Shape';
 
 export class BestPracticeService extends PointService {
     async createShapes(data: PainterPointInterface): Promise<Konva.Group> {
-        const primaryColor = data.primaryColor ?? DefaultColor;
         const point = new Konva.Group({
             id: data.id,
             name: 'Point',
@@ -15,20 +14,16 @@ export class BestPracticeService extends PointService {
         point.add(await this.createIcon(data, iconBase64));
 
         if (data.text) {
-            point.add(this.createToolTip({
-                text: data.text,
-                primaryColor: primaryColor,
-                textColor: data.textColor
-            }, data.tooltipPosition));
+            point.add(this.createToolTip(data, data.tooltipPosition));
         }
 
         return point;
     }
 
-    private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition?: string): Konva.Group {
+    private createToolTip(data: PainterPointInterface, tooltipPosition?: string): Konva.Group {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
         const primaryColor = '#ffffff';
-        const textColor = tooltipConfig.primaryColor ?? '#ffffff';
+        const textColor = data.primaryColor ?? '#ffffff';
         const paddingLeft = 12;
         const paddingTop = 14;
         let rectWidth = 160;
@@ -45,7 +40,7 @@ export class BestPracticeService extends PointService {
         const simpleText = new Konva.Text({
             x: paddingLeft,
             y: paddingTop,
-            text: tooltipConfig.text,
+            text: data.text,
             fontSize: 14,
             fill: textColor,
             fontStyle: '400',
@@ -53,15 +48,18 @@ export class BestPracticeService extends PointService {
         });
 
         const contentWidth = simpleText.width();
-        // const icon: Konva.Group = this.iconBestPractice();
-        // icon.setPosition({x: 9, y: 8});
-        // const iconWidth = 35;
-        // contentWidth += iconWidth;
-        // simpleText.x(8 + iconWidth);
         rectWidth = contentWidth + paddingLeft * 2;
+
+        const config: ShapeConfig = {};
+        if (data.active) {
+            config.strokeWidth = 3;
+            config.stroke = '#0372FF';
+        }
         const rectWrapper = new Konva.Shape({
             sceneFunc: (context, shape) => {
-                this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], triangleWidth, triangleHeight, tooltipPosition);
+                const arrowWidth = data.active ? 0 : triangleWidth;
+                const arrowHeight = data.active ? 0 : triangleHeight;
+                this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], arrowWidth, arrowHeight, tooltipPosition);
                 context.fillStrokeShape(shape);
             },
             x: 0,
@@ -71,15 +69,29 @@ export class BestPracticeService extends PointService {
             shadowBlur: 9,
             shadowOffset: { x: 0, y: 3 },
             shadowOpacity: 0.5,
-            // strokeWidth: 1,
-            // stroke: primaryColor,
-            name: 'RectWrapper'
+            name: 'RectWrapper',
+            ...config,
+            shadowForStrokeEnabled: false,
         });
         rectWrapper.width(rectWidth);
         rectWrapper.height(rectHeight);
-
         toolTip.add(rectWrapper);
-        // icon && toolTip.add(icon);
+        let arrow: Konva.Shape;
+        if (data.active) {
+            arrow = new Konva.Shape({
+                sceneFunc: (context, shape) => {
+                    this.createArrow(context, 0, 0, triangleWidth, triangleHeight, tooltipPosition);
+                    context.fillStrokeShape(shape);
+                },
+                x: 0,
+                y: 0,
+                fill: '#0372FF',
+                name: 'PointArrow',
+            });
+            const arrowPos = this.getArrowPosition(rectWrapper, tooltipPosition, triangleWidth);
+            arrow.setPosition(arrowPos);
+        }
+        arrow && toolTip.add(arrow);
         toolTip.add(simpleText);
         toolTip.setPosition(this.getTooltipPosition(rectWrapper, tooltipPosition));
 

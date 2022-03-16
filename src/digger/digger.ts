@@ -350,6 +350,7 @@ export class Digger implements DiggerInterface {
             link_background_color: data.link_background_color,
             link_background_color_hovering: data.link_background_color_hovering,
             title_base64: data.title_base64,
+            active: data.active,
         }
     }
 }

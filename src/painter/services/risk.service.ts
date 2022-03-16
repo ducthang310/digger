@@ -1,11 +1,12 @@
-import { PainterConfigInterface, PainterPointInterface, TooltipConfig } from '../painter.interface';
+import { PainterConfigInterface, PainterPointInterface } from '../painter.interface';
 import Konva from 'konva';
-import { DefaultColor, PointSubtype } from '../painter.constants';
+import { PointSubtype } from '../painter.constants';
 import { PointService } from './base.service';
+import { ShapeConfig } from 'konva/lib/Shape';
 
 export class RiskService extends PointService {
     async createShapes(data: PainterPointInterface): Promise<Konva.Group> {
-        const primaryColor = data.primaryColor ?? DefaultColor;
+        // const primaryColor = data.primaryColor ?? DefaultColor;
         const point = new Konva.Group({
             id: data.id,
             name: 'Point',
@@ -17,19 +18,14 @@ export class RiskService extends PointService {
 
         const iconBase64 = data.subtype === PointSubtype.CriticalItem ? criticalItem : importantItem;
         point.add(await this.createIcon(data, iconBase64));
-        point.add(this.createToolTip({
-            title: data.title,
-            description: data.description,
-            primaryColor: primaryColor,
-            textColor: data.textColor,
-        }, data.tooltipPosition));
+        point.add(this.createToolTip(data, data.tooltipPosition));
         return point;
     }
 
-    private createToolTip(tooltipConfig: TooltipConfig, tooltipPosition?: string): Konva.Group {
+    private createToolTip(data: PainterPointInterface, tooltipPosition?: string): Konva.Group {
         tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
-        // const primaryColor = tooltipConfig.primaryColor ?? DefaultColor;
-        const textColor = tooltipConfig.textColor ?? '#ffffff';
+        // const primaryColor = data.primaryColor ?? DefaultColor;
+        const textColor = data.textColor ?? '#ffffff';
         const paddingLeft = 12;
         const paddingTop = 14;
         let rectWidth = 160;
@@ -46,18 +42,18 @@ export class RiskService extends PointService {
         const simpleText = new Konva.Text({
             x: paddingLeft,
             y: paddingTop,
-            text: tooltipConfig.title,
+            text: data.title,
             fontSize: 14,
             fontFamily: 'Poppins',
             fill: textColor,
             fontStyle: '400',
         });
         let descriptionText: Konva.Text;
-        if (tooltipConfig.description) {
+        if (data.description) {
             descriptionText = new Konva.Text({
                 x: paddingLeft,
                 y: paddingTop + simpleText.height() + 5,
-                text: tooltipConfig.description,
+                text: data.description,
                 fontSize: 14,
                 fill: textColor,
                 fontStyle: '400',
@@ -65,28 +61,23 @@ export class RiskService extends PointService {
             });
         }
 
-        // const headRect = new Konva.Shape({
-        //     sceneFunc: (context, shape) => {
-        //         this.createWrapper(context, 0, 0, rectWidth, 8, [8, 8, 0, 0], 0, 0)
-        //         context.fillStrokeShape(shape);
-        //     },
-        //     x: 0,
-        //     y: 0,
-        //     width: 140,
-        //     height: 8,
-        //     fill: primaryColor,
-        // });
         const titleWidth = simpleText.width();
         const descriptionWidth = descriptionText ? descriptionText.width() : 0;
         const descriptionHeight = descriptionText ? descriptionText.height() : 0;
         const contentWidth = titleWidth < descriptionWidth ? descriptionWidth : titleWidth;
         rectWidth = contentWidth + paddingLeft * 2;
-        // headRect.width(rectWidth);
         rectHeight = descriptionHeight ? (paddingTop + simpleText.height() + descriptionHeight + 17) : 40;
 
+        const config: ShapeConfig = {};
+        if (data.active) {
+            config.strokeWidth = 3;
+            config.stroke = '#0372FF';
+        }
         const rectWrapper = new Konva.Shape({
             sceneFunc: (context, shape) => {
-                this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], triangleWidth, triangleHeight, tooltipPosition)
+                const arrowWidth = data.active ? 0 : triangleWidth;
+                const arrowHeight = data.active ? 0 : triangleHeight;
+                this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], arrowWidth, arrowHeight, tooltipPosition)
                 context.fillStrokeShape(shape);
             },
             x: 0,
@@ -96,19 +87,36 @@ export class RiskService extends PointService {
             shadowBlur: 9,
             shadowOffset: { x: 0, y: 3 },
             shadowOpacity: 0.5,
-            // strokeWidth: 1,
-            // stroke: primaryColor,
-            name: 'RectWrapper'
+            name: 'RectWrapper',
+            ...config,
+            shadowForStrokeEnabled: false,
         });
-        rectWrapper.width(rectWidth + 2);
+        rectWrapper.width(rectWidth);
         rectWrapper.height(rectHeight);
         toolTip.add(rectWrapper);
+
+        let arrow: Konva.Shape;
+        if (data.active) {
+            arrow = new Konva.Shape({
+                sceneFunc: (context, shape) => {
+                    this.createArrow(context, 0, 0, triangleWidth, triangleHeight, tooltipPosition);
+                    context.fillStrokeShape(shape);
+                },
+                x: 0,
+                y: 0,
+                fill: '#0372FF',
+                name: 'PointArrow',
+            });
+            const arrowPos = this.getArrowPosition(rectWrapper, tooltipPosition, triangleWidth);
+            arrow.setPosition(arrowPos);
+        }
+        arrow && toolTip.add(arrow);
         // toolTip.add(headRect);
         toolTip.add(simpleText);
         descriptionText && toolTip.add(descriptionText);
         const pos = this.getTooltipPosition(rectWrapper, tooltipPosition);
         pos.x++;
-        toolTip.setPosition(pos);
+        toolTip.setPosition(this.getTooltipPosition(rectWrapper, tooltipPosition));
 
         return toolTip;
     }

@@ -40,6 +40,7 @@ export interface PainterPointInterface {
     link_background_color?: string;
     link_background_color_hovering?: string;
     title_base64?: string;
+    active?: boolean;
 }
 
 export interface TooltipConfig {

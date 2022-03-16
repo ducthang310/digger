@@ -102,11 +102,51 @@ export abstract class PointService {
         ctx.closePath();
     }
 
+    createArrow(
+        ctx: Context, x: number, y: number, triangleWidth: number, triangleHeight: number, position?: string
+    ): void {
+        position = position ?? 'top';
+        ctx.beginPath();
+        const curveW = 2;
+        const curveH = 1;
+
+        switch (position) {
+            case 'right':
+                ctx.lineTo(x, (y + triangleWidth) / 2);
+                ctx.lineTo(x - triangleHeight + curveH, (y + curveW) / 2);
+                ctx.quadraticCurveTo(x - triangleHeight, y / 2, x - triangleHeight + curveH, (y - curveW) / 2);
+                ctx.lineTo(x, (y - triangleWidth) / 2);
+                break;
+            case 'bottom':
+                ctx.lineTo((x - triangleWidth) / 2, y);
+                ctx.lineTo((x - curveW) / 2, y - triangleHeight + curveH);
+                ctx.quadraticCurveTo(x / 2, y - triangleHeight, (x + curveW) / 2, y - triangleHeight + curveH);
+                ctx.lineTo((x + triangleWidth) / 2, y);
+                break;
+            case 'left':
+                ctx.lineTo(x, (y - triangleWidth) / 2);
+                ctx.lineTo(x + triangleHeight - curveH, (y - curveW) / 2);
+                ctx.quadraticCurveTo(x + triangleHeight, y / 2, x + triangleHeight - curveH, (y + curveW) / 2);
+                ctx.lineTo(x, (y + triangleWidth) / 2);
+                break;
+            default:
+                ctx.lineTo((x + triangleWidth) / 2, 0);
+                ctx.lineTo((x + curveW) / 2, triangleHeight - curveH);
+                ctx.quadraticCurveTo(x / 2, triangleHeight, (x - curveW) / 2, triangleHeight - curveH);
+                ctx.lineTo((x - triangleWidth) / 2, 0);
+        }
+        ctx.closePath();
+    }
+
     getTooltipPosition(wrapper: Konva.Shape, tooltipPosition: string): {x: number, y: number} {
         const pos = {x: 0, y: 0};
         const gap = 45;
-        const height = wrapper.height();
-        const width = wrapper.width();
+        const clientRect = wrapper.getClientRect({
+            skipShadow: true,
+            skipStroke: true,
+        });
+        const width = clientRect.width;
+        const height = clientRect.height;
         switch (tooltipPosition) {
             case 'right':
                 pos.x = gap;
@@ -123,6 +163,34 @@ export abstract class PointService {
             default:
                 pos.x = -1 * width / 2;
                 pos.y = -1 * (height + gap);
+        }
+        return pos;
+    }
+
+    getArrowPosition(wrapper: Konva.Shape, tooltipPosition: string, triangleWidth: number): {x: number, y: number} {
+        const pos = {x: 0, y: 0};
+        const clientRect = wrapper.getClientRect({
+            skipShadow: true,
+            skipStroke: false,
+        });
+        const width = clientRect.width;
+        const height = clientRect.height;
+        switch (tooltipPosition) {
+            case 'right':
+                pos.x = 0 - clientRect.x - 1;
+                pos.y = (height - triangleWidth) / 2 - clientRect.y;
+                break;
+            case 'bottom':
+                pos.x = (width - triangleWidth) / 2 - clientRect.x;
+                pos.y = 0 - clientRect.y - 2;
+                break;
+            case 'left':
+                pos.x = width + clientRect.x - 2;
+                pos.y = (height - triangleWidth) / 2 - clientRect.y;
+                break;
+            default:
+                pos.x = (width - triangleWidth) / 2 - clientRect.x;
+                pos.y = height + clientRect.y -1;
         }
         return pos;
     }

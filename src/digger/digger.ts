@@ -22,11 +22,13 @@ export class Digger implements DiggerInterface {
     currentPosition: Vector2d;
 
     timeoutIDRendering: any;
+    timeoutIdResize: any;
     zoomGap: number;
     maxLevel: number;
     minLevel: number;
     scaleValueMapper = new Map<number, number>();
     scaleValues: number[] = [];
+    standardWidth: number;
 
 
     constructor(config: DiggerConfigInterface) {
@@ -48,12 +50,13 @@ export class Digger implements DiggerInterface {
     init(config: DiggerConfigInterface): void {
         this.validateConfig(config);
         this.config = config;
-
+        const container = this.getContainer();
         this.calculator = new Calculator();
+        this.standardWidth = this.calculator.calStandardWidth(container.clientWidth, container.clientHeight);
         this.painter = new Painter({
             containerId: this.config.containerId,
-            width: this.getContainer().clientWidth,
-            height: this.getContainer().clientHeight,
+            width: container.clientWidth,
+            height: container.clientHeight,
             events: {
                 ...this.config.events,
                 dragend: this.cbDragEnd.bind(this),
@@ -89,6 +92,21 @@ export class Digger implements DiggerInterface {
         if (Array.isArray(this.config.points) && this.config.points.length) {
             this.painter.drawPoints(this.config.points.map(p => this.convertToPainterPoint(p)));
         }
+
+        window.addEventListener('resize', () => {
+            if (this.timeoutIdResize) {
+                clearTimeout(this.timeoutIdResize);
+                this.timeoutIdResize = null;
+            }
+            this.timeoutIdResize = setTimeout(() => {
+                // this.standardWidth = this.calculator.calStandardWidth(container.clientWidth, container.clientHeight);
+                this.render(this.currentZoomLevel, this.currentScaleValue, this.currentPosition);
+                this.painter.resize();
+            }, 500);
+        });
+        // window.addEventListener('orientationchange', () => {
+        //     this.painter.resize();
+        // });
     }
 
     private render(zoomLevel: ZoomLevelInterface, scaleValue: number, position?: Vector2d, redrawPoints = false): void {
@@ -111,7 +129,7 @@ export class Digger implements DiggerInterface {
                 container.clientWidth, container.clientHeight,
                 zoomLevel.image,
                 scaleValue,
-                this.getContainer().clientWidth,
+                this.standardWidth,
             );
             this.painter.drawImages(images, zoomLevel.id);
 
@@ -220,7 +238,7 @@ export class Digger implements DiggerInterface {
         return this.calculator.canvasPositionToImagePosition(
             canvasPos,
             STANDARD_WIDTH,
-            this.getContainer().clientWidth
+            this.standardWidth,
         );
     }
 
@@ -280,7 +298,7 @@ export class Digger implements DiggerInterface {
             this.config.events.pointDragend(id, this.calculator.canvasPositionToImagePosition(
                 position,
                 STANDARD_WIDTH,
-                this.getContainer().clientWidth
+                this.standardWidth,
             ));
         }
     }
@@ -301,10 +319,11 @@ export class Digger implements DiggerInterface {
         }
     }
 
-    private getContainer(): HTMLElement {
-        const container = document.getElementById(this.config.containerId);
+    private getContainer(containerId?: string): HTMLElement {
+        containerId = containerId ?? this.config.containerId;
+        const container = document.getElementById(containerId);
         if (!container) {
-            throw new Error(`Container does not exist (id = ${this.config.containerId})`);
+            throw new Error(`Container does not exist (id = ${containerId})`);
         }
         return container;
     }
@@ -341,7 +360,7 @@ export class Digger implements DiggerInterface {
             position: this.calculator.imagePositionToCanvasPosition(
                 data.position,
                 STANDARD_WIDTH,
-                this.getContainer().clientWidth
+                this.standardWidth,
             ),
             tooltipPosition: data.tooltip_position,
             pin_to_edge: data.pin_to_edge,

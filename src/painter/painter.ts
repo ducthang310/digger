@@ -102,6 +102,30 @@ export class Painter implements PainterInterface {
         }
     }
 
+    private getContainer(containerId?: string): HTMLElement {
+        containerId = containerId ?? this.config.containerId;
+        const container = document.getElementById(containerId);
+        if (!container) {
+            throw new Error(`Container does not exist (id = ${containerId})`);
+        }
+        return container;
+    }
+
+    public resize(): void {
+        // const sceneWidth = window.innerWidth;
+        const container = this.getContainer('tool-viewer');
+        const containerWidth = container.offsetWidth;
+        const containerHeight = container.offsetHeight;
+        // const scale = containerWidth / sceneWidth;
+        if (this.stage.width() === containerWidth) {
+            return;
+        }
+
+        this.stage.width(containerWidth);
+        this.stage.height(containerHeight);
+        // this.stage.scale({ x: scale, y: scale });
+    }
+
     reset(): void {
         this.imageLayer.destroyChildren();
         this.pointLayer.destroyChildren();

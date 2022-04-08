@@ -180,4 +180,20 @@ export class Calculator implements CalculatorInterface {
         // console.log(points, visiblePoints);
         return visiblePoints;
     }
+
+    calStandardWidth(containerWidth: number, containerHeight: number): number {
+        let standardWidth;
+        const baseWidth = 16;
+        const baseHeight = 9;
+
+        const ratio = containerWidth / baseWidth;
+        const tmpHeight = ratio * baseHeight;
+        if (containerHeight <= tmpHeight) {
+            standardWidth = containerWidth;
+        } else {
+            standardWidth = (containerHeight / baseHeight) * baseWidth;
+        }
+
+        return standardWidth;
+    }
 }

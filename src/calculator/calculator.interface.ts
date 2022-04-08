@@ -28,4 +28,6 @@ export interface CalculatorInterface {
     canvasPositionToImagePosition(imgPos: Vector2d, imageWidth: number, standardWidth: number): Vector2d;
 
     getVisiblePoints(points: PointInterface[], scaleValue: number, zoomGap: number): PointInterface[];
+
+    calStandardWidth(containerWidth: number, containerHeight: number): number;
 }

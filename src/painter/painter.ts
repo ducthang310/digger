@@ -39,6 +39,7 @@ export class Painter implements PainterInterface {
     init(): void {
         // this.levelMapper = new Map<string, Konva.Group>();
         // this.pointMapper = new Map<string, Konva.Group>();
+        Konva.hitOnDragEnabled = true;
         this.stage = new Konva.Stage({
             container: this.containerId,
             width: this.config.width,
@@ -93,6 +94,68 @@ export class Painter implements PainterInterface {
                 this.config.events.scale(newScale, newPos);
             }
         });
+        let lastCenter: {x: number, y: number} = null;
+        let lastDist = 0;
+
+        this.stage.on('touchmove', (e) => {
+            e.evt.preventDefault();
+            const touch1 = e.evt.touches[0];
+            const touch2 = e.evt.touches[1];
+
+            if (touch1 && touch2) {
+                // if the stage was under Konva's drag&drop
+                // we need to stop it, and implement our own pan logic with two pointers
+                if (this.stage.isDragging()) {
+                    this.stage.stopDrag();
+                }
+
+                const p1 = {
+                    x: touch1.clientX,
+                    y: touch1.clientY,
+                };
+                const p2 = {
+                    x: touch2.clientX,
+                    y: touch2.clientY,
+                };
+
+                if (!lastCenter) {
+                    lastCenter = this.getCenter(p1, p2);
+                    return;
+                }
+                const newCenter = this.getCenter(p1, p2);
+                const dist = this.getDistance(p1, p2);
+                if (!lastDist) {
+                    lastDist = dist;
+                }
+
+                // local coordinates of center point
+                const pointTo = {
+                    x: (newCenter.x - this.stage.x()) / this.stage.scaleX(),
+                    y: (newCenter.y - this.stage.y()) / this.stage.scaleX(),
+                };
+
+                const scale = this.stage.scaleX() * (dist / lastDist);
+                this.stage.scaleX(scale);
+                this.stage.scaleY(scale);
+
+                // calculate new position of the stage
+                const dx = newCenter.x - lastCenter.x;
+                const dy = newCenter.y - lastCenter.y;
+
+                const newPos = {
+                    x: newCenter.x - pointTo.x * scale + dx,
+                    y: newCenter.y - pointTo.y * scale + dy,
+                };
+                this.stage.position(newPos);
+                lastDist = dist;
+                lastCenter = newCenter;
+            }
+        });
+
+        this.stage.on('touchend', () => {
+            lastDist = 0;
+            lastCenter = null;
+        });
         if (this.config.events && this.config.events.dragend) {
             this.stage.on('dragend', () => {
                 if (this.config.events && this.config.events.dragend) {
@@ -100,6 +163,17 @@ export class Painter implements PainterInterface {
                 }
             });
         }
+    }
+
+    private getDistance(p1: {x: number, y: number}, p2: {x: number, y: number}) {
+        return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+    }
+
+    private getCenter(p1: {x: number, y: number}, p2: {x: number, y: number}) {
+        return {
+            x: (p1.x + p2.x) / 2,
+            y: (p1.y + p2.y) / 2,
+        };
     }
 
     private getContainer(containerId?: string): HTMLElement {

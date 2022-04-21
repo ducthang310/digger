@@ -174,13 +174,13 @@ export class LinkService extends PointService {
     }
 
     initEvents(point: Konva.Group, config: PainterConfigInterface, data: PainterPointInterface): Konva.Group {
-        point.on('click', () => {
+        point.on('click touchstart', () => {
             if (config.events?.pointClick) {
                 config.events.pointClick(point.id());
             }
         });
         point.find('.Tooltip').forEach(t => {
-            t.on('click', (evt) => {
+            t.on('click touchstart', (evt) => {
                 if (config.events?.tooltipClick) {
                     evt.cancelBubble = true;
                     config.events.tooltipClick(point.id());

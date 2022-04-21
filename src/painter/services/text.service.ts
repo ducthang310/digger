@@ -209,7 +209,7 @@ export class TextService extends PointService {
     // }
 
     initEvents(point: Konva.Group, config: PainterConfigInterface): Konva.Group {
-        point.on('click', () => {
+        point.on('click touchstart', () => {
             if (config.events?.pointClick) {
                 config.events.pointClick(point.id());
             }

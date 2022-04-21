@@ -207,7 +207,7 @@ export class RiskService extends PointService {
     // }
 
     initEvents(point: Konva.Group, config: PainterConfigInterface): Konva.Group {
-        point.on('click', (evt) => {
+        point.on('click touchstart', (evt) => {
             if (config.events?.pointClick && evt.target.name() === 'PointCircle') {
                 config.events.pointClick(point.id());
             } else if (config.events?.tooltipClick && evt.target.name() === 'Tooltip') {

@@ -73,26 +73,12 @@ export class Painter implements PainterInterface {
                 x: (pointer.x - this.stage.x()) / oldScale,
                 y: (pointer.y - this.stage.y()) / oldScale,
             };
-            let newScale =
-                e.evt.deltaY < 0 ? oldScale * this.config.scaleBy : oldScale / this.config.scaleBy;
-            newScale = newScale < 1 ? 1 : newScale;
-            newScale = this.maxScaleValue < newScale ? this.maxScaleValue : newScale;
-
-            if (oldScale === newScale) {
-                return;
-            }
-            this.stage.scale({x: newScale, y: newScale});
-
+            const newScale = e.evt.deltaY < 0 ? oldScale * this.config.scaleBy : oldScale / this.config.scaleBy;
             const newPos = {
                 x: pointer.x - mousePointTo.x * newScale,
                 y: pointer.y - mousePointTo.y * newScale,
             };
-            this.stage.position(newPos);
-            this.keepThePointSize();
-            this.stage.batchDraw();
-            if (this.config.events && this.config.events.scale) {
-                this.config.events.scale(newScale, newPos);
-            }
+            this.scaleTo(newScale, newPos);
         });
         let lastCenter: {x: number, y: number} = null;
         let lastDist = 0;
@@ -134,19 +120,22 @@ export class Painter implements PainterInterface {
                     y: (newCenter.y - this.stage.y()) / this.stage.scaleX(),
                 };
 
-                const scale = this.stage.scaleX() * (dist / lastDist);
-                this.stage.scaleX(scale);
-                this.stage.scaleY(scale);
+                const oldScale = this.stage.scaleX();
+                let newScale = this.stage.scaleX() * (dist / lastDist);
+                newScale = newScale < 1 ? 1 : newScale;
+                newScale = this.maxScaleValue < newScale ? this.maxScaleValue : newScale;
+                if (oldScale === newScale) {
+                    return;
+                }
 
                 // calculate new position of the stage
                 const dx = newCenter.x - lastCenter.x;
                 const dy = newCenter.y - lastCenter.y;
-
                 const newPos = {
-                    x: newCenter.x - pointTo.x * scale + dx,
-                    y: newCenter.y - pointTo.y * scale + dy,
+                    x: newCenter.x - pointTo.x * newScale + dx,
+                    y: newCenter.y - pointTo.y * newScale + dy,
                 };
-                this.stage.position(newPos);
+                this.scaleTo(newScale, newPos);
                 lastDist = dist;
                 lastCenter = newCenter;
             }
@@ -162,6 +151,23 @@ export class Painter implements PainterInterface {
                     this.config.events.dragend(this.stage.position());
                 }
             });
+        }
+    }
+
+    private scaleTo(newScale: number, newPosition?: {x: number, y: number}): void {
+        const oldScale = this.stage.scaleX();
+        newScale = newScale < 1 ? 1 : newScale;
+        newScale = this.maxScaleValue < newScale ? this.maxScaleValue : newScale;
+
+        if (oldScale === newScale) {
+            return;
+        }
+        this.stage.scale({x: newScale, y: newScale});
+        this.stage.position(newPosition);
+        this.keepThePointSize();
+        this.stage.batchDraw();
+        if (this.config.events && this.config.events.scale) {
+            this.config.events.scale(newScale, newPosition);
         }
     }
 

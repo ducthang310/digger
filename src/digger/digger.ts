@@ -77,12 +77,21 @@ export class Digger implements DiggerInterface {
         this.currentPosition = {x: 0, y: 0};
         if (Array.isArray(this.config.zoomLevels) && this.config.zoomLevels.length) {
             this.setMaxMinLevel();
+            let maxIndex = 1;
             this.config.zoomLevels.forEach(z => {
                 this.zoomLevelMapper.set(z.levelIndex, z);
                 const scaleValue = DiggerUtility.calculateScaleValue(this.zoomGap, z.levelIndex);
                 this.scaleValueMapper.set(scaleValue, z.levelIndex);
                 this.scaleValues.push(scaleValue);
+                maxIndex = maxIndex < z.levelIndex ? z.levelIndex : maxIndex;
             });
+            const additionalLevels = 2;
+            for (let i = 1; i <= additionalLevels; i++) {
+                const index = maxIndex + i;
+                const scaleValue = DiggerUtility.calculateScaleValue(this.zoomGap, index);
+                this.scaleValueMapper.set(scaleValue, index);
+                this.scaleValues.push(scaleValue);
+            }
             this.scaleValues.sort();
             this.painter.setMaxScaleValue(Math.max(...this.scaleValues));
             this.currentZoomLevel = this.config.zoomLevels[0];
@@ -170,14 +179,21 @@ export class Digger implements DiggerInterface {
     }
 
     zoomIn(): void {
-        let levelIndex = this.currentZoomLevel ? this.currentZoomLevel.levelIndex : 1;
-        levelIndex += 1.05;
+        if (this.currentScaleValue >= Math.max(...this.scaleValues)) {
+            return;
+        }
+        let levelIndex = this.scaleToLevelIndex(this.currentScaleValue);
+        levelIndex++;
+
         this.currentScaleValue = DiggerUtility.calculateScaleValue(this.zoomGap, levelIndex);
         this.painter.scale(this.currentScaleValue);
     }
 
     zoomOut(): void {
-        let levelIndex = this.currentZoomLevel ? this.currentZoomLevel.levelIndex : 1;
+        if (this.currentScaleValue <= Math.min(...this.scaleValues)) {
+            return;
+        }
+        let levelIndex = this.scaleToLevelIndex(this.currentScaleValue);
         levelIndex--;
         const newVal = DiggerUtility.calculateScaleValue(this.zoomGap, levelIndex);
         this.currentScaleValue = newVal <= 1 ? 1 : newVal;
@@ -199,12 +215,21 @@ export class Digger implements DiggerInterface {
         this.zoomLevelMapper = new Map<number, ZoomLevelInterface>();
         this.scaleValueMapper = new Map<number, number>();
         this.scaleValues = [];
+        let maxIndex = 1;
         this.config.zoomLevels.forEach(z => {
             this.zoomLevelMapper.set(z.levelIndex, z);
             const scaleValue = DiggerUtility.calculateScaleValue(this.zoomGap, z.levelIndex);
             this.scaleValueMapper.set(scaleValue, z.levelIndex);
             this.scaleValues.push(scaleValue);
+            maxIndex = maxIndex < z.levelIndex ? z.levelIndex : maxIndex;
         });
+        const additionalLevels = 2;
+        for (let i = 1; i <= additionalLevels; i++) {
+            const index = maxIndex + i;
+            const scaleValue = DiggerUtility.calculateScaleValue(this.zoomGap, index);
+            this.scaleValueMapper.set(scaleValue, index);
+            this.scaleValues.push(scaleValue);
+        }
         this.scaleValues.sort();
         this.painter.setMaxScaleValue(Math.max(...this.scaleValues));
         this.setMaxMinLevel();

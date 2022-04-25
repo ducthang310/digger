@@ -6,6 +6,7 @@ export interface PainterConfigInterface {
     height: number;
     events?: EventCallbacksInterface;
     scaleBy: number;
+    standardWidth: number;
 }
 
 export interface PainterImageInterface {

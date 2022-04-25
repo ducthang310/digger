@@ -66,6 +66,7 @@ export class Digger implements DiggerInterface {
                 pointMouseleave: this.cbPointMouseleave.bind(this),
             },
             scaleBy: this.config.scaleBy ? this.config.scaleBy : DEFAULT_SCALE_BY,
+            standardWidth: this.standardWidth,
         });
 
         this.zoomGap = this.config.zoomGap || DEFAULT_ZOOM_GAP;

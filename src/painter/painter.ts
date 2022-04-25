@@ -16,6 +16,7 @@ import { ComingSoonService } from './services/coming-soon.service';
 export class Painter implements PainterInterface {
     config: PainterConfigInterface;
     containerId: string;
+    standardWidth: number;
 
     servicesMap = new Map<number, PointService>();
 
@@ -33,6 +34,7 @@ export class Painter implements PainterInterface {
         }
         this.config = config;
         this.containerId = config.containerId;
+        this.standardWidth = config.standardWidth;
         this.init();
     }
 
@@ -44,7 +46,10 @@ export class Painter implements PainterInterface {
             container: this.containerId,
             width: this.config.width,
             height: this.config.height,
-            draggable: true
+            draggable: true,
+            dragBoundFunc: (pos) => {
+                return this.applyBoundaryForPosition(pos);
+            },
         });
         this.imageLayer = new Konva.Layer({
             listening: false,
@@ -154,6 +159,20 @@ export class Painter implements PainterInterface {
         }
     }
 
+    private applyBoundaryForPosition(pos: {x: number, y: number}): {x: number, y: number} {
+        const containerWidth = this.stage.width();
+        const containerHeight = this.stage.height();
+        const standardHeight = this.standardWidth * 9 / 16;
+        const scale = this.stage.scaleX();
+        const maxX = 0;
+        const minX = containerWidth - this.standardWidth * scale;
+        const maxY = 0;
+        const minY = containerHeight - standardHeight * scale;
+        const x = maxX < pos.x ? maxX : (pos.x < minX ? minX : pos.x);
+        const y = maxY < pos.y ? maxY : (pos.y < minY ? minY : pos.y);
+        return {x, y};
+    }
+
     private scaleTo(newScale: number, newPosition?: {x: number, y: number}): void {
         const oldScale = this.stage.scaleX();
         newScale = newScale < 1 ? 1 : newScale;
@@ -162,6 +181,7 @@ export class Painter implements PainterInterface {
         if (oldScale === newScale) {
             return;
         }
+        newPosition = this.applyBoundaryForPosition(newPosition);
         this.stage.scale({x: newScale, y: newScale});
         this.stage.position(newPosition);
         this.keepThePointSize();

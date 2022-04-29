@@ -2,7 +2,7 @@ import { PainterConfigInterface, PainterPointInterface } from '../painter.interf
 import Konva from 'konva';
 import { PointSubtype } from '../painter.constants';
 import { PointService } from './base.service';
-import { ShapeConfig } from 'konva/lib/Shape';
+// import { ShapeConfig } from 'konva/lib/Shape';
 
 export class RiskService extends PointService {
     async createShapes(data: PainterPointInterface): Promise<Konva.Group> {
@@ -13,113 +13,113 @@ export class RiskService extends PointService {
             draggable: data.draggable,
         });
 
-        const importantItem = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTAwcHgiIGhlaWdodD0iMTAwcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPHRpdGxlPmltcG9ydGFudC1pdGVtPC90aXRsZT4KICAgIDxkZWZzPgogICAgICAgIDxmaWx0ZXIgeD0iLTM0LjQlIiB5PSItMzQuNCUiIHdpZHRoPSIxNjguOCUiIGhlaWdodD0iMTY4LjglIiBmaWx0ZXJVbml0cz0ib2JqZWN0Qm91bmRpbmdCb3giIGlkPSJmaWx0ZXItMSI+CiAgICAgICAgICAgIDxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249IjYiIGluPSJTb3VyY2VHcmFwaGljIj48L2ZlR2F1c3NpYW5CbHVyPgogICAgICAgIDwvZmlsdGVyPgogICAgPC9kZWZzPgogICAgPGcgaWQ9ImltcG9ydGFudC1pdGVtIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8Y2lyY2xlIGlkPSJoYWxvIiBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiPjwvY2lyY2xlPgogICAgICAgIDxjaXJjbGUgaWQ9Ik92YWwtQ29weS0yIiBmaWxsLW9wYWNpdHk9IjAuNTk3ODIwMTQ5IiBmaWxsPSIjRkNCMDMwIiBmaWx0ZXI9InVybCgjZmlsdGVyLTEpIiBjeD0iNTAuMTYyNzkwNyIgY3k9IjUwLjE2Mjc5MDciIHI9IjI2LjE2Mjc5MDciPjwvY2lyY2xlPgogICAgICAgIDxjaXJjbGUgaWQ9Ik92YWwiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSIjRkRCMDMwIiBjeD0iNTAiIGN5PSI1MCIgcj0iMTUiPjwvY2lyY2xlPgogICAgPC9nPgo8L3N2Zz4=';
-        const criticalItem = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTAwcHgiIGhlaWdodD0iMTAwcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPHRpdGxlPmNyaXRpY2FsLWl0ZW08L3RpdGxlPgogICAgPGRlZnM+CiAgICAgICAgPGZpbHRlciB4PSItMzQuNCUiIHk9Ii0zNC40JSIgd2lkdGg9IjE2OC44JSIgaGVpZ2h0PSIxNjguOCUiIGZpbHRlclVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgaWQ9ImZpbHRlci0xIj4KICAgICAgICAgICAgPGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iNiIgaW49IlNvdXJjZUdyYXBoaWMiPjwvZmVHYXVzc2lhbkJsdXI+CiAgICAgICAgPC9maWx0ZXI+CiAgICA8L2RlZnM+CiAgICA8ZyBpZD0iY3JpdGljYWwtaXRlbSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGNpcmNsZSBpZD0iaGFsbyIgb3BhY2l0eT0iMC4xMyIgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIj48L2NpcmNsZT4KICAgICAgICA8Y2lyY2xlIGlkPSJPdmFsLUNvcHktMiIgZmlsbD0iI0Q5MkUyNCIgb3BhY2l0eT0iMC41MDQ1NTEiIGZpbHRlcj0idXJsKCNmaWx0ZXItMSkiIGN4PSI1MC4xNjI3OTA3IiBjeT0iNTAuMTYyNzkwNyIgcj0iMjYuMTYyNzkwNyI+PC9jaXJjbGU+CiAgICAgICAgPGNpcmNsZSBpZD0iT3ZhbCIgc3Ryb2tlPSIjRkZGRkZGIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9IiNEOTJFMjQiIGN4PSI1MCIgY3k9IjUwIiByPSIxNSI+PC9jaXJjbGU+CiAgICAgICAgPGcgaWQ9ImV4Y2xhbWF0aW9uIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1MC4wMDAwMDAsIDQ5LjY2NjY2Nykgcm90YXRlKC0xODAuMDAwMDAwKSB0cmFuc2xhdGUoLTUwLjAwMDAwMCwgLTQ5LjY2NjY2NykgdHJhbnNsYXRlKDQ4LjAwMDAwMCwgNDAuMDAwMDAwKSI+CiAgICAgICAgICAgIDxlbGxpcHNlIGlkPSJPdmFsIiBmaWxsPSIjRkZGRkZGIiBjeD0iMiIgY3k9IjIuMDM1NzE0MjkiIHJ4PSIyIiByeT0iMi4wMzU3MTQyOSI+PC9lbGxpcHNlPgogICAgICAgICAgICA8bGluZSB4MT0iMiIgeTE9IjcuNzk3NjE5MDUiIHgyPSIyIiB5Mj0iMTkuMzMzMzMzMyIgaWQ9IlBhdGgtNTIiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiPjwvbGluZT4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==';
+        const importantItem = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8dGl0bGU+SG90IFNwb3QgU3RhbmRhcmQ8L3RpdGxlPgogICAgPGcgaWQ9IkhvdC1TcG90LVN0YW5kYXJkIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8Y2lyY2xlIHN0cm9rZT0iI0ZGRkZGRiIgZmlsbD0iI0ZFQkMyQyIgY3g9IjEwIiBjeT0iMTAiIHI9IjkuNSI+PC9jaXJjbGU+CiAgICAgICAgPHBhdGggZD0iTTExLDcuNTQ1OTQ5NjMgTDEwLjQ4MjQyODEsMTIuMjI5NDA3OCBMOS41MzAzNTE0NCwxMi4yMjk0MDc4IEw5LDcuNTQ1OTQ5NjMgTDksNSBMMTEsNSBMMTEsNy41NDU5NDk2MyBaIE0xMC45NDg4ODE4LDEzLjAzMjY3NTMgTDEwLjk0ODg4MTgsMTUgTDkuMDQ0NzI4NDMsMTUgTDkuMDQ0NzI4NDMsMTMuMDMyNjc1MyBMMTAuOTQ4ODgxOCwxMy4wMzI2NzUzIFoiIGlkPSJTaGFwZSIgZmlsbD0iI0ZGRkZGRiIgZmlsbC1ydWxlPSJub256ZXJvIj48L3BhdGg+CiAgICA8L2c+Cjwvc3ZnPg==';
+        const criticalItem = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgICA8dGl0bGU+SG90IFNwb3QgQ3JpdGljYWw8L3RpdGxlPgogICAgPGcgaWQ9IkhvdC1TcG90LUNyaXRpY2FsIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8Y2lyY2xlIGlkPSJPdmFsIiBzdHJva2U9IiNGRkZGRkYiIGZpbGw9IiNGRjYwNTgiIGN4PSIxMCIgY3k9IjEwIiByPSI5LjUiPjwvY2lyY2xlPgogICAgICAgIDxwYXRoIGQ9Ik0xMSw3LjU0NTk0OTYzIEwxMC40ODI0MjgxLDEyLjIyOTQwNzggTDkuNTMwMzUxNDQsMTIuMjI5NDA3OCBMOSw3LjU0NTk0OTYzIEw5LDUgTDExLDUgTDExLDcuNTQ1OTQ5NjMgWiBNMTAuOTQ4ODgxOCwxMy4wMzI2NzUzIEwxMC45NDg4ODE4LDE1IEw5LjA0NDcyODQzLDE1IEw5LjA0NDcyODQzLDEzLjAzMjY3NTMgTDEwLjk0ODg4MTgsMTMuMDMyNjc1MyBaIiBpZD0iU2hhcGUiIGZpbGw9IiNGRkZGRkYiIGZpbGwtcnVsZT0ibm9uemVybyI+PC9wYXRoPgogICAgPC9nPgo8L3N2Zz4=';
 
         const iconBase64 = data.subtype === PointSubtype.CriticalItem ? criticalItem : importantItem;
         point.add(await this.createIcon(data, iconBase64));
-        point.add(this.createToolTip(data, data.tooltipPosition));
+        point.add(this.createText(data, data.tooltipPosition));
         return point;
     }
 
-    private createToolTip(data: PainterPointInterface, tooltipPosition?: string): Konva.Group {
-        tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
-        // const primaryColor = data.primaryColor ?? DefaultColor;
-        const textColor = data.textColor ?? '#ffffff';
-        const paddingLeft = 12;
-        const paddingTop = 14;
-        let rectWidth = 160;
-        let rectHeight = 40;
-        const triangleWidth = 9;
-        const triangleHeight = 20;
-
-        const toolTip = new Konva.Group({
-            name: 'Tooltip',
-            x: 0,
-            y: 0,
-        });
-
-        const simpleText = new Konva.Text({
-            x: paddingLeft,
-            y: paddingTop,
-            text: data.title,
-            fontSize: 14,
-            fontFamily: 'Poppins',
-            fill: textColor,
-            fontStyle: '400',
-        });
-        let descriptionText: Konva.Text;
-        if (data.description) {
-            descriptionText = new Konva.Text({
-                x: paddingLeft,
-                y: paddingTop + simpleText.height() + 5,
-                text: data.description,
-                fontSize: 14,
-                fill: textColor,
-                fontStyle: '400',
-                fontFamily: 'Poppins',
-            });
-        }
-
-        const titleWidth = simpleText.width();
-        const descriptionWidth = descriptionText ? descriptionText.width() : 0;
-        const descriptionHeight = descriptionText ? descriptionText.height() : 0;
-        const contentWidth = titleWidth < descriptionWidth ? descriptionWidth : titleWidth;
-        rectWidth = contentWidth + paddingLeft * 2;
-        rectHeight = descriptionHeight ? (paddingTop + simpleText.height() + descriptionHeight + 17) : 40;
-
-        const config: ShapeConfig = {};
-        if (data.active) {
-            config.strokeWidth = 3;
-            config.stroke = '#0372FF';
-        }
-        const rectWrapper = new Konva.Shape({
-            sceneFunc: (context, shape) => {
-                const arrowWidth = data.active ? 0 : triangleWidth;
-                const arrowHeight = data.active ? 0 : triangleHeight;
-                this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], arrowWidth, arrowHeight, tooltipPosition)
-                context.fillStrokeShape(shape);
-            },
-            x: 0,
-            y: 0,
-            fill: '#fff',
-            shadowColor: '#000000',
-            shadowBlur: 9,
-            shadowOffset: { x: 0, y: 3 },
-            shadowOpacity: 0.5,
-            name: 'RectWrapper',
-            ...config,
-            shadowForStrokeEnabled: false,
-        });
-        rectWrapper.width(rectWidth);
-        rectWrapper.height(rectHeight);
-        toolTip.add(rectWrapper);
-
-        let arrow: Konva.Shape;
-        if (data.active) {
-            arrow = new Konva.Shape({
-                sceneFunc: (context, shape) => {
-                    this.createArrow(context, 0, 0, triangleWidth, triangleHeight, tooltipPosition);
-                    context.fillStrokeShape(shape);
-                },
-                x: 0,
-                y: 0,
-                fill: '#0372FF',
-                name: 'PointArrow',
-            });
-            const arrowPos = this.getArrowPosition(rectWrapper, tooltipPosition, triangleWidth);
-            arrow.setPosition(arrowPos);
-        }
-        arrow && toolTip.add(arrow);
-        // toolTip.add(headRect);
-        toolTip.add(simpleText);
-        descriptionText && toolTip.add(descriptionText);
-        const pos = this.getTooltipPosition(rectWrapper, tooltipPosition);
-        pos.x++;
-        toolTip.setPosition(this.getTooltipPosition(rectWrapper, tooltipPosition));
-
-        return toolTip;
-    }
+    // private createToolTip(data: PainterPointInterface, tooltipPosition?: string): Konva.Group {
+    //     tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
+    //     // const primaryColor = data.primaryColor ?? DefaultColor;
+    //     const textColor = data.textColor ?? '#ffffff';
+    //     const paddingLeft = 12;
+    //     const paddingTop = 14;
+    //     let rectWidth = 160;
+    //     let rectHeight = 40;
+    //     const triangleWidth = 9;
+    //     const triangleHeight = 20;
+    //
+    //     const toolTip = new Konva.Group({
+    //         name: 'Tooltip',
+    //         x: 0,
+    //         y: 0,
+    //     });
+    //
+    //     const simpleText = new Konva.Text({
+    //         x: paddingLeft,
+    //         y: paddingTop,
+    //         text: data.title,
+    //         fontSize: 14,
+    //         fontFamily: 'Poppins',
+    //         fill: textColor,
+    //         fontStyle: '400',
+    //     });
+    //     let descriptionText: Konva.Text;
+    //     if (data.description) {
+    //         descriptionText = new Konva.Text({
+    //             x: paddingLeft,
+    //             y: paddingTop + simpleText.height() + 5,
+    //             text: data.description,
+    //             fontSize: 14,
+    //             fill: textColor,
+    //             fontStyle: '400',
+    //             fontFamily: 'Poppins',
+    //         });
+    //     }
+    //
+    //     const titleWidth = simpleText.width();
+    //     const descriptionWidth = descriptionText ? descriptionText.width() : 0;
+    //     const descriptionHeight = descriptionText ? descriptionText.height() : 0;
+    //     const contentWidth = titleWidth < descriptionWidth ? descriptionWidth : titleWidth;
+    //     rectWidth = contentWidth + paddingLeft * 2;
+    //     rectHeight = descriptionHeight ? (paddingTop + simpleText.height() + descriptionHeight + 17) : 40;
+    //
+    //     const config: ShapeConfig = {};
+    //     if (data.active) {
+    //         config.strokeWidth = 3;
+    //         config.stroke = '#0372FF';
+    //     }
+    //     const rectWrapper = new Konva.Shape({
+    //         sceneFunc: (context, shape) => {
+    //             const arrowWidth = data.active ? 0 : triangleWidth;
+    //             const arrowHeight = data.active ? 0 : triangleHeight;
+    //             this.createWrapper(context, 0, 0, rectWidth, rectHeight, [8, 8, 8, 8], arrowWidth, arrowHeight, tooltipPosition)
+    //             context.fillStrokeShape(shape);
+    //         },
+    //         x: 0,
+    //         y: 0,
+    //         fill: '#fff',
+    //         shadowColor: '#000000',
+    //         shadowBlur: 9,
+    //         shadowOffset: { x: 0, y: 3 },
+    //         shadowOpacity: 0.5,
+    //         name: 'RectWrapper',
+    //         ...config,
+    //         shadowForStrokeEnabled: false,
+    //     });
+    //     rectWrapper.width(rectWidth);
+    //     rectWrapper.height(rectHeight);
+    //     toolTip.add(rectWrapper);
+    //
+    //     let arrow: Konva.Shape;
+    //     if (data.active) {
+    //         arrow = new Konva.Shape({
+    //             sceneFunc: (context, shape) => {
+    //                 this.createArrow(context, 0, 0, triangleWidth, triangleHeight, tooltipPosition);
+    //                 context.fillStrokeShape(shape);
+    //             },
+    //             x: 0,
+    //             y: 0,
+    //             fill: '#0372FF',
+    //             name: 'PointArrow',
+    //         });
+    //         const arrowPos = this.getArrowPosition(rectWrapper, tooltipPosition, triangleWidth);
+    //         arrow.setPosition(arrowPos);
+    //     }
+    //     arrow && toolTip.add(arrow);
+    //     // toolTip.add(headRect);
+    //     toolTip.add(simpleText);
+    //     descriptionText && toolTip.add(descriptionText);
+    //     const pos = this.getTooltipPosition(rectWrapper, tooltipPosition);
+    //     pos.x++;
+    //     toolTip.setPosition(this.getTooltipPosition(rectWrapper, tooltipPosition));
+    //
+    //     return toolTip;
+    // }
 
     changePointProperties(pointData: PainterPointInterface, point: Konva.Group): void {
         point.position(pointData.position);

@@ -12,6 +12,7 @@ import { BestPracticeService } from './services/best-practice.service';
 import { RiskService } from './services/risk.service';
 import { PointService } from './services/base.service';
 import { ComingSoonService } from './services/coming-soon.service';
+import { DropdownService } from './services/dropdown.service';
 
 export class Painter implements PainterInterface {
     config: PainterConfigInterface;
@@ -27,6 +28,12 @@ export class Painter implements PainterInterface {
     // pointMapper: Map<string, Konva.Group>;
     visibleImageIds: string[];
     maxScaleValue = 100;
+    boundary = {
+        minX: -Infinity,
+        maxX: Infinity,
+        minY: -Infinity,
+        maxY: Infinity,
+    };
 
     constructor(config: PainterConfigInterface) {
         if (!config || !config.containerId) {
@@ -63,6 +70,7 @@ export class Painter implements PainterInterface {
 
         // this.imageLayer.draw();
         this.initEvents();
+        this.calculateBoundary();
     }
 
     setMaxScaleValue(val: number): void {
@@ -160,16 +168,8 @@ export class Painter implements PainterInterface {
     }
 
     private applyBoundaryForPosition(pos: {x: number, y: number}): {x: number, y: number} {
-        const containerWidth = this.stage.width();
-        const containerHeight = this.stage.height();
-        const standardHeight = this.standardWidth * 9 / 16;
-        const scale = this.stage.scaleX();
-        const maxX = 0;
-        const minX = containerWidth - this.standardWidth * scale;
-        const maxY = 0;
-        const minY = containerHeight - standardHeight * scale;
-        const x = maxX < pos.x ? maxX : (pos.x < minX ? minX : pos.x);
-        const y = maxY < pos.y ? maxY : (pos.y < minY ? minY : pos.y);
+        const x = this.boundary.maxX < pos.x ? this.boundary.maxX : (pos.x < this.boundary.minX ? this.boundary.minX : pos.x);
+        const y = this.boundary.maxY < pos.y ? this.boundary.maxY : (pos.y < this.boundary.minY ? this.boundary.minY : pos.y);
         return {x, y};
     }
 
@@ -189,6 +189,44 @@ export class Painter implements PainterInterface {
         if (this.config.events && this.config.events.scale) {
             this.config.events.scale(newScale, newPosition);
         }
+        this.calculateBoundary();
+    }
+
+    scale(value: number): void {
+        const oldScale = this.stage.scaleX();
+        const center = {
+            x: this.stage.width() / 2,
+            y: this.stage.height() / 2,
+        };
+
+        const relatedTo = {
+            x: (center.x - this.stage.x()) / oldScale,
+            y: (center.y - this.stage.y()) / oldScale,
+        };
+        const newPos = {
+            x: center.x - relatedTo.x * value,
+            y: center.y - relatedTo.y * value,
+        };
+        const tween = new Konva.Tween({
+            node: this.stage,
+            duration: 1,
+            easing: Konva.Easings.EaseInOut,
+            onUpdate: () => {
+                if (this.config.events && this.config.events.scale) {
+                    this.config.events.scale(this.stage.scaleX(), this.stage.position());
+                }
+                this.keepThePointSize();
+            },
+            onFinish: () => {
+                tween.destroy();
+                this.calculateBoundary();
+            },
+            scaleX: value,
+            scaleY: value,
+            x: newPos.x,
+            y: newPos.y
+        });
+        tween.play();
     }
 
     private getDistance(p1: {x: number, y: number}, p2: {x: number, y: number}) {
@@ -217,13 +255,29 @@ export class Painter implements PainterInterface {
         const containerWidth = container.offsetWidth;
         const containerHeight = container.offsetHeight;
         // const scale = containerWidth / sceneWidth;
-        if (this.stage.width() === containerWidth) {
+        if (this.stage.width() === containerWidth && this.stage.height() === containerHeight) {
             return;
         }
 
         this.stage.width(containerWidth);
         this.stage.height(containerHeight);
         // this.stage.scale({ x: scale, y: scale });
+
+        // Re-calculate boundary
+        this.calculateBoundary();
+    }
+
+    private calculateBoundary(): void {
+        const containerWidth = this.stage.width();
+        const containerHeight = this.stage.height();
+        const standardHeight = this.standardWidth * 9 / 16;
+        const scale = this.stage.scaleX();
+        this.boundary = {
+            minX: containerWidth - this.standardWidth * scale,
+            maxX: 0,
+            minY: containerHeight - standardHeight * scale,
+            maxY: 0,
+        }
     }
 
     reset(): void {
@@ -231,6 +285,7 @@ export class Painter implements PainterInterface {
         this.pointLayer.destroyChildren();
         this.stage.position({x: 0, y: 0});
         this.stage.scale({x: 1, y: 1});
+        this.calculateBoundary();
     }
 
     private keepThePointSize(): void {
@@ -241,40 +296,6 @@ export class Painter implements PainterInterface {
                 scaleY: 1 / this.stage.scaleY()
             });
         });
-    }
-
-    scale(value: number): void {
-        const oldScale = this.stage.scaleX();
-        const center = {
-            x: this.stage.width() / 2,
-            y: this.stage.height() / 2,
-        };
-
-        const relatedTo = {
-            x: (center.x - this.stage.x()) / oldScale,
-            y: (center.y - this.stage.y()) / oldScale,
-        };
-        const newPos = {
-            x: center.x - relatedTo.x * value,
-            y: center.y - relatedTo.y * value,
-        };
-        const tween = new Konva.Tween({
-            node: this.stage,
-            duration: 1,
-            easing: Konva.Easings.EaseInOut,
-            onUpdate: () => {
-                if (this.config.events && this.config.events.scale) {
-                    this.config.events.scale(this.stage.scaleX(), this.stage.position());
-                }
-                this.keepThePointSize();
-            },
-            onFinish: () => tween.destroy(),
-            scaleX: value,
-            scaleY: value,
-            x: newPos.x,
-            y: newPos.y
-        });
-        tween.play();
     }
 
     drawImages(images: PainterImageInterface[], levelId: string): void {
@@ -455,6 +476,9 @@ export class Painter implements PainterInterface {
                 break;
             case PointType.COMING_SOON:
                 service = new ComingSoonService();
+                break;
+            case PointType.DROPDOWN:
+                service = new DropdownService();
                 break;
             default:
                 throw new Error('Point type is invalid');

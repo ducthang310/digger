@@ -4,6 +4,7 @@ import { PainterUtility } from '../painter.utility';
 import { PainterConfigInterface, PainterPointInterface } from '../painter.interface';
 import { Context } from 'konva/lib/Context';
 import { NodeConfig } from 'konva/lib/Node';
+import { ShapeConfig } from 'konva/lib/Shape';
 
 export abstract class PointService {
     abstract createShapes(data: PainterPointInterface, stage?: Konva.Stage): Promise<Konva.Group>;
@@ -28,6 +29,12 @@ export abstract class PointService {
     }
 
     createIcon(data: PainterPointInterface, base64: string): Promise<Konva.Image> {
+        const config: ShapeConfig = {};
+        if (data.active) {
+            config.shadowColor = '#0372FF';
+            config.shadowOpacity = 1;
+            config.shadowOffset = {x: 0, y: 0};
+        }
         return new Promise((resolve, reject) => {
             const imageObj = new Image();
             imageObj.onload = () => {
@@ -36,6 +43,11 @@ export abstract class PointService {
                     y: 0,
                     image: imageObj,
                     name: 'PointCircle',
+                    shadowColor: '#000000',
+                    shadowBlur: 4,
+                    shadowOffset: { x: 0, y: 2 },
+                    shadowOpacity: 0.5,
+                    ...config,
                 });
                 icon.setPosition({
                     x: -1 * icon.width() / 2,
@@ -140,7 +152,7 @@ export abstract class PointService {
 
     getTooltipPosition(wrapper: Konva.Shape, tooltipPosition: string): {x: number, y: number} {
         const pos = {x: 0, y: 0};
-        const gap = 45;
+        const gap = 14;
         const clientRect = wrapper.getClientRect({
             skipShadow: true,
             skipStroke: true,
@@ -150,7 +162,7 @@ export abstract class PointService {
         switch (tooltipPosition) {
             case 'right':
                 pos.x = gap;
-                pos.y = -1 * height / 2;
+                pos.y = -1 * height / 2 + 2;
                 break;
             case 'bottom':
                 pos.x = -1 * width / 2;
@@ -158,7 +170,7 @@ export abstract class PointService {
                 break;
             case 'left':
                 pos.x = -1 * (width + gap)
-                pos.y = -1 * height / 2;
+                pos.y = -1 * height / 2 + 2;
                 break;
             default:
                 pos.x = -1 * width / 2;
@@ -193,5 +205,30 @@ export abstract class PointService {
                 pos.y = height + clientRect.y -1;
         }
         return pos;
+    }
+
+    createText(data: PainterPointInterface, tooltipPosition?: string): Konva.Text {
+        tooltipPosition = tooltipPosition ? tooltipPosition : 'top';
+        const config: ShapeConfig = {};
+        if (data.active) {
+            config.fill = '#0372FF';
+        }
+
+        const simpleText = new Konva.Text({
+            x: 0,
+            y: 0,
+            text: data.title,
+            fontSize: 12,
+            fontFamily: 'Poppins',
+            fill: '#000000',
+            fontStyle: '400',
+            strokeWidth: 2,
+            stroke: '#FFFFFF',
+            ...config,
+            fillAfterStrokeEnabled: true,
+        });
+        simpleText.setPosition(this.getTooltipPosition(simpleText, tooltipPosition));
+
+        return simpleText;
     }
 }

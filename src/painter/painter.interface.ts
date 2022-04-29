@@ -58,6 +58,7 @@ export enum PointType {
     BEST_PRACTICE,
     RISK,
     COMING_SOON,
+    DROPDOWN,
 }
 
 export interface PainterInterface {

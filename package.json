@@ -18,12 +18,12 @@
     "ts-node": "ts-node",
     "docs": "typedoc --entryPoints src/main.ts",
     "build": "tsc -p tsconfig.json",
-    "build-all": "yarn clean && yarn build && yarn esbuild-browser",
-
+    "build-all": "yarn clean && yarn build && build-main && yarn esbuild-browser",
     "build-main": "esbuild src/main.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/main.js",
     "esbuild-browser": "esbuild src/browser.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/browser.js",
     "esbuild-browser:dev": "esbuild src/browser.ts --bundle --outfile=dist/esbuild/browser.js",
-    "esbuild-browser:watch": "esbuild src/browser.ts --bundle --watch --outfile=dist/esbuild/browser.js"
+    "esbuild-browser:watch": "esbuild src/browser.ts --bundle --watch --outfile=dist/esbuild/browser.js",
+    "esbuild-browser:watch:app": "esbuild src/browser.ts --bundle --watch --outfile=../tools-webapp/src/libs/digger.js"
   },
   "devDependencies": {
     "@types/jest": "^27.0.2",
